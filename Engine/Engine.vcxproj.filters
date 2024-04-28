@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="GraphicsPrimitives\BufferLayout.cpp" />
+    <ClCompile Include="GraphicsPrimitives\IndexBuffer.cpp" />
+    <ClCompile Include="GraphicsPrimitives\Shader.cpp" />
+    <ClCompile Include="GraphicsPrimitives\ShaderProgam.cpp" />
+    <ClCompile Include="GraphicsPrimitives\Texture.cpp" />
+    <ClCompile Include="GraphicsPrimitives\Uniform.cpp" />
+    <ClCompile Include="GraphicsPrimitives\VertexArray.cpp" />
+    <ClCompile Include="GraphicsPrimitives\VertexBuffer.cpp" />
+    <ClCompile Include="GraphicsPrimitives\WindowsManager.cpp" />
+    <ClCompile Include="IerarchyClasses\Classes\Frame.cpp" />
+    <ClCompile Include="IerarchyClasses\Classes\Program.cpp" />
+    <ClCompile Include="IerarchyClasses\Modifiers\Instance.cpp" />
+    <ClCompile Include="IerarchyClasses\Modifiers\Instance2DData.cpp" />
+    <ClCompile Include="IerarchyClasses\Modifiers\Renderer2D.cpp" />
+    <ClCompile Include="Maths\Vector2.cpp" />
+    <ClCompile Include="Dependencies\stb_image\stb_image.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UsefullStuff\ClassEvent.h" />
+    <ClInclude Include="UsefullStuff\ClearIntervalInVector.h" />
+    <ClInclude Include="UsefullStuff\FilterVector.h" />
+    <ClInclude Include="UsefullStuff\FindFilterInsertIndexInVector.h" />
+    <ClInclude Include="UsefullStuff\InsertVectorInVector.h" />
+    <ClInclude Include="UsefullStuff\InsertWithFilterInVector.h" />
+    <ClInclude Include="UsefullStuff\MoveIntervalInVector.h" />
+    <ClInclude Include="UsefullStuff\SwapIntervalsInVector.h" />
+    <ClInclude Include="GraphicsPrimitives\BufferLayout.h" />
+    <ClInclude Include="GraphicsPrimitives\Debug.h" />
+    <ClInclude Include="GraphicsPrimitives\IndexBuffer.h" />
+    <ClInclude Include="GraphicsPrimitives\Shader.h" />
+    <ClInclude Include="GraphicsPrimitives\ShaderProgram.h" />
+    <ClInclude Include="GraphicsPrimitives\Texture.h" />
+    <ClInclude Include="GraphicsPrimitives\Uniform.h" />
+    <ClInclude Include="GraphicsPrimitives\VertexArray.h" />
+    <ClInclude Include="GraphicsPrimitives\VertexBuffer.h" />
+    <ClInclude Include="GraphicsPrimitives\WindowsManager.h" />
+    <ClInclude Include="IerarchyClasses\Classes\Frame.h" />
+    <ClInclude Include="IerarchyClasses\Classes\Program.h" />
+    <ClInclude Include="IerarchyClasses\Modifiers\ClassesMap.h" />
+    <ClInclude Include="IerarchyClasses\Modifiers\Instance.h" />
+    <ClInclude Include="IerarchyClasses\Modifiers\Instance2DData.h" />
+    <ClInclude Include="IerarchyClasses\Modifiers\Renderer2D.h" />
+    <ClInclude Include="Maths\Matrix.h" />
+    <ClInclude Include="Maths\SPCS.h" />
+    <ClInclude Include="Maths\Vector2.h" />
+    <ClInclude Include="Dependencies\stb_image\stb_image.h" />
+  </ItemGroup>
+</Project>
