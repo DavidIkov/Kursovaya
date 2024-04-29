@@ -15,6 +15,7 @@ std::string GetShaderProgramTypeEnumName(ShaderProgramTypeEnum type) {
 	return 0;
 }
 
+
 const Uniform& ShaderProgram::gUniform() const {
 	return vUniform;
 }
@@ -30,6 +31,9 @@ void ShaderProgram::Unbind() {
 	glSC(glUseProgram(0));
 }
 
+void ShaderProgram::DeleteShader() {
+	glSC(glDeleteProgram(ID));
+}
 
 void ShaderProgram::CompileShader() {
 
@@ -166,7 +170,6 @@ void ShaderProgram::CompileShader() {
 
 	glSC(glAttachShader(ID, fragmentShaderID));
 
-
 	glSC(glLinkProgram(ID));
 
 #if defined _DEBUG
@@ -187,4 +190,8 @@ void ShaderProgram::CompileShader() {
 
 	glSC(glDeleteShader(vertexShaderID));
 	glSC(glDeleteShader(fragmentShaderID));
+
+
+	/*std::cout << vertexShader << '\n';
+	std::cout << fragmentShader << '\n';*/
 }

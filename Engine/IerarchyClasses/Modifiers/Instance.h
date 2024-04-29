@@ -55,9 +55,7 @@ public:
 
 	
 	unsigned int gChildrenAmount() const;
-
-	/*when parent is changes first time, it means that all settings for rendering and etc are ready to go! 
-	you cant change those settings anymore, atleast it may crash if no error handling was done or just nothing will happen*/
+	
 	void sParent(ClassesMap* newPar);
 	ClassesMap* gParent() const;
 

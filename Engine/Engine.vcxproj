@@ -24,6 +24,7 @@
     <ClCompile Include="GraphicsPrimitives\IndexBuffer.cpp" />
     <ClCompile Include="GraphicsPrimitives\Shader.cpp" />
     <ClCompile Include="GraphicsPrimitives\ShaderProgam.cpp" />
+    <ClCompile Include="GraphicsPrimitives\ShaderProgramManager.cpp" />
     <ClCompile Include="GraphicsPrimitives\Texture.cpp" />
     <ClCompile Include="GraphicsPrimitives\Uniform.cpp" />
     <ClCompile Include="GraphicsPrimitives\VertexArray.cpp" />
@@ -44,6 +45,7 @@
     <ClInclude Include="GraphicsPrimitives\IndexBuffer.h" />
     <ClInclude Include="GraphicsPrimitives\Shader.h" />
     <ClInclude Include="GraphicsPrimitives\ShaderProgram.h" />
+    <ClInclude Include="GraphicsPrimitives\ShaderProgramManager.h" />
     <ClInclude Include="GraphicsPrimitives\Texture.h" />
     <ClInclude Include="GraphicsPrimitives\Uniform.h" />
     <ClInclude Include="GraphicsPrimitives\VertexArray.h" />
@@ -62,6 +64,7 @@
     <ClInclude Include="UsefullStuff\ClearIntervalInVector.h" />
     <ClInclude Include="UsefullStuff\FilterVector.h" />
     <ClInclude Include="UsefullStuff\FindFilterInsertIndexInVector.h" />
+    <ClInclude Include="UsefullStuff\IDBasedVector.h" />
     <ClInclude Include="UsefullStuff\InsertVectorInVector.h" />
     <ClInclude Include="UsefullStuff\InsertWithFilterInVector.h" />
     <ClInclude Include="UsefullStuff\MoveIntervalInVector.h" />

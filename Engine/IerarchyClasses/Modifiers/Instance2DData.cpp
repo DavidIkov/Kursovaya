@@ -35,7 +35,7 @@ void Instance2DData::RecursivelyModifyParentDependentElementsAmount(int diff) {
 }
 
 void Instance2DData::AddVertexDataData(std::string name, unsigned int len, ShaderProgramTypeEnum type) {
-	Shader.VertexBufferData.push_back({ type,name });
+	VertexDataTypes.push_back(type);
 	VertexDataNames.push_back(name);
 	VertexDataEndOffsets.push_back(len + ((VertexDataEndOffsets.size() == 0) ? 0 : VertexDataEndOffsets[VertexDataEndOffsets.size() - 1]));
 }
@@ -120,6 +120,8 @@ void Instance2DData::ApplyVertexTemplate(VertexTemplateEnum vertexTemplate) {
 
 
 void Instance2DData::AddVertex(std::vector<float> dataVec) {
+	Vertexes.push_back(0.f);
+	Vertexes.push_back(0.f);
 	for (unsigned int i = 0; i < dataVec.size(); i++) {
 		Vertexes.push_back(dataVec[i]);
 	}
@@ -151,12 +153,16 @@ void Instance2DData::UpdateIndexBuffer() {
 Instance2DData::Instance2DData(ClassesMap* nPtr){
 	instancePtr = nPtr;
 
-	AddVertexDataData("Position", 2, ShaderProgramTypeEnum::vector2);
+	//base
+	AddVertexDataData("ScreenPosition", 2, ShaderProgramTypeEnum::vector2);
+
+
+	AddVertexDataData("LocalPosition", 2, ShaderProgramTypeEnum::vector2);
 	AddVertexDataData("Color", 4, ShaderProgramTypeEnum::vector4);
 
-	Shader.TransferData.push_back({ ShaderProgramTypeEnum::vector4 ,"VertexColor" });
-	Shader.VertexShaderCodeParts.push_back("t_VertexColor=i_Color;\ngl_Position = vec4(i_Position.x, i_Position.y, 0.f, 1.f);");
-	Shader.FragmentShaderCodeParts.push_back("o_PixelColor=t_VertexColor;");
+	/*Shader.TransferData.push_back({ ShaderProgramTypeEnum::vector4 ,"VertexColor" });
+	Shader.VertexShaderCodeParts.push_back("t_VertexColor=i_Color;\ngl_Position = vec4(i_ScreenPosition.x, i_ScreenPosition.y, 0.f, 1.f);");
+	Shader.FragmentShaderCodeParts.push_back("o_PixelColor=t_VertexColor;");*/
 
 
 	{
@@ -192,7 +198,8 @@ Instance2DData::Instance2DData(ClassesMap* nPtr){
 		instancePtr->FindTypePtr<Instance>(Instance::TypeIndex)->ParentChange.ConnectBeforeEvent([this](ClassesMap* newPar) {
 			
 			//compiles shader
-			if (not Shader.gCompiled()) Shader.CompileShader();
+			if (not ShaderProgramManager::ShaderPrograms[ShaderID].ShaderProgramPtr->gCompiled()) 
+				ShaderProgramManager::ShaderPrograms[ShaderID].ShaderProgramPtr->CompileShader();
 
 			RecursivelyModifyParentDependentElementsAmount(-(int)DependentElementsAmount);
 
@@ -218,8 +225,7 @@ Instance2DData::Instance2DData(ClassesMap* nPtr){
 
 			//thing about rendering... basically set index of layout that we need
 			if (newRenderingParent != nullptr)
-				RendererObjectRenderTypeInd = newRenderingParent->GetTypeOfObjectRenderingElementInd(
-					VertexDataEndOffsets, &Shader);
+				RendererObjectRenderTypeInd = newRenderingParent->GetTypeOfObjectRenderingElementInd(VertexDataEndOffsets);
 
 
 			

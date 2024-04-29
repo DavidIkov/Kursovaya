@@ -3,6 +3,9 @@
 #include"Renderer2D.h"
 #include"../../GraphicsPrimitives/Debug.h"
 
+
+#include"../../GraphicsPrimitives/ShaderProgramManager.h"
+
 #include"../../Maths/Matrix.h"
 #include"../../Maths/SPCS.h"
 #include"../../Maths/Vector2.h"
@@ -10,11 +13,10 @@
 
 const std::type_index Renderer2D::TypeIndex = std::type_index(typeid(Renderer2D));
 
-Renderer2D::TypesOfObjectsRendering_Element::TypesOfObjectsRendering_Element(const std::vector<unsigned int>& layout, ShaderProgram* shader) :vVertexArray(), vVertexBuffer(), vIndexBuffer(), vBufferLayout(GL_FLOAT, sizeof(float)) {
+Renderer2D::TypesOfObjectsRendering_Element::TypesOfObjectsRendering_Element(const std::vector<unsigned int>& layout) :vVertexArray(), vVertexBuffer(), vIndexBuffer(), vBufferLayout(GL_FLOAT, sizeof(float)) {
 	for (unsigned int i = 0; i < layout.size(); i++) vBufferLayout.AddData(layout[i]);
 	vBufferLayout.Bind();
 	vVertexArray.Unbind();
-	Shader = shader;
 }
 bool Renderer2D::TypesOfObjectsRendering_Element::CompareWithLayout(const std::vector<unsigned int>& vertexDataLens) const {
 	if (vertexDataLens.size() != vBufferLayout.Lengths.size()) return false;
@@ -25,8 +27,8 @@ void Renderer2D::TypesOfObjectsRendering_Element::Bind(Instance2DData* instPtr, 
 	vVertexBuffer.ModifyData(vertexBuffer);
 	vIndexBuffer.ModifyData(indexBuffer);
 	vVertexArray.Bind();
-	Shader->Bind();
-	instPtr->UpdateUniformData.FireEvent(Shader->gUniform());
+	ShaderProgramManager::ShaderPrograms[instPtr->ShaderID].ShaderProgramPtr->Bind();
+	instPtr->UpdateUniformData.FireEvent(ShaderProgramManager::ShaderPrograms[instPtr->ShaderID].ShaderProgramPtr->gUniform());
 }
 void Renderer2D::TypesOfObjectsRendering_Element::Unbind() {
 	vVertexArray.Unbind();
@@ -49,7 +51,7 @@ unsigned int Renderer2D::GetTypeOfObjectRenderingElementInd(const std::vector<un
 
 	return -1;
 }
-unsigned int Renderer2D::GetTypeOfObjectRenderingElementInd(const std::vector<unsigned int>& VertexDataEndOffsets, ShaderProgram* shader) {
+unsigned int Renderer2D::GetTypeOfObjectRenderingElementInd(const std::vector<unsigned int>& VertexDataEndOffsets) {
 	std::vector<unsigned int> lens(VertexDataEndOffsets.size(), 0);
 	lens[0] = VertexDataEndOffsets[0];
 	for (unsigned int i = 1; i < lens.size(); i++) lens[i] = VertexDataEndOffsets[i] - VertexDataEndOffsets[i - 1];
@@ -60,7 +62,7 @@ unsigned int Renderer2D::GetTypeOfObjectRenderingElementInd(const std::vector<un
 			return i;
 
 	//not found where to insert... create new
-	TypesOfObjectsRendering.push_back({ lens, shader });
+	TypesOfObjectsRendering.push_back({ lens });
 	return TypesOfObjectsRendering.size() - 1;
 }
 
@@ -161,8 +163,8 @@ void Renderer2D::Render(int width, int height) {
 		std::vector<float> newBufferData(vertexes.size(), 0.f);
 		for (unsigned int i = 0; i < vertexes.size() / vertexLen; i++) {
 			unsigned int curDataOffset = i * vertexLen;
-			Matrix vecAdd(1, 2, { ResSizeX / 2 * (vertexes[curDataOffset] + positionOffset.gSX()) + positionOffset.gPX() ,
-				ResSizeY / 2 * (vertexes[curDataOffset + 1] + positionOffset.gSY()) + positionOffset.gPY() });
+			Matrix vecAdd(1, 2, { ResSizeX / 2 * (vertexes[curDataOffset + 2] + positionOffset.gSX()) + positionOffset.gPX() ,
+				ResSizeY / 2 * (vertexes[curDataOffset + 3] + positionOffset.gSY()) + positionOffset.gPY() });
 			Matrix rotatedVecAdd = ResAxes * vecAdd;
 			newBufferData[curDataOffset] = (ResPosX + rotatedVecAdd[0]) / width * 2;
 			newBufferData[curDataOffset + 1] = (ResPosY + rotatedVecAdd[1]) / height * 2;
@@ -170,6 +172,7 @@ void Renderer2D::Render(int width, int height) {
 				newBufferData[curDataOffset + oi] = vertexes[curDataOffset + oi];
 			}
 		}
+
 		TypesOfObjectsRendering[Element->RendererObjectRenderTypeInd].Bind(Element, &newBufferData, &(Element->IndexBufferData));
 
 		glSC(glDrawElements(GL_TRIANGLES, Element->IndexBufferData.size(), GL_UNSIGNED_INT, 0));

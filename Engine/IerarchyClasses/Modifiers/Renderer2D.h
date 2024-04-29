@@ -9,7 +9,6 @@
 #include"../../GraphicsPrimitives/IndexBuffer.h"
 #include"../../GraphicsPrimitives/VertexArray.h"
 #include"../../GraphicsPrimitives/BufferLayout.h"
-#include"../../GraphicsPrimitives/ShaderProgram.h"
 
 class Instance2DData;
 
@@ -21,15 +20,14 @@ class Renderer2D {
 		VertexBuffer vVertexBuffer;
 		IndexBuffer vIndexBuffer;
 		BufferLayout vBufferLayout;
-		ShaderProgram* Shader;
-		TypesOfObjectsRendering_Element(const std::vector<unsigned int>& layout, ShaderProgram* shader);
+		TypesOfObjectsRendering_Element(const std::vector<unsigned int>& layout);
 		bool CompareWithLayout(const std::vector<unsigned int>& vertexDataLens) const;
 		void Bind(Instance2DData* instPtr, std::vector<float>* vertexBuffer, std::vector<unsigned int>* indexBuffer);
 		void Unbind();
 	};
 	std::vector<TypesOfObjectsRendering_Element> TypesOfObjectsRendering;
 	unsigned int GetTypeOfObjectRenderingElementInd(const std::vector<unsigned int>& VertexDataEndOffsets) const;
-	unsigned int GetTypeOfObjectRenderingElementInd(const std::vector<unsigned int>& VertexDataEndOffsets, ShaderProgram* shader);
+	unsigned int GetTypeOfObjectRenderingElementInd(const std::vector<unsigned int>& VertexDataEndOffsets);
 
 	ClassesMap* instancePtr = nullptr;//"this" pointer from actual instance
 	std::vector<Instance2DData*> FilteredOrder;

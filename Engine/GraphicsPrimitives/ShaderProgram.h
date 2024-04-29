@@ -10,7 +10,8 @@ enum ShaderProgramTypeEnum {
 };
 std::string GetShaderProgramTypeEnumName(ShaderProgramTypeEnum type);
 
-//need to make so same if same shader program exists it wont create new same progam!!!!
+/*need to make so same if same shader program exists it wont create new same progam!!!!ALSO OPTIMISE COPYING, 
+by making all data as pointers so i can just put pointer to original shader*/
 class ShaderProgram {
 public:
 	static const unsigned int ShaderVersion = 330;
@@ -25,7 +26,6 @@ private:
 	bool Compiled = false;
 public:
 
-	
 
 	std::vector<DataElement> VertexBufferData;
 	std::vector<DataElement> TransferData;
@@ -42,6 +42,7 @@ public:
 	void Bind();
 	static void Unbind();
 
+	void DeleteShader();
 	//after shader is compiled, you CANT change how shader will threat data it gets fed or any of its code becouse its already compiled and cant be changed
 	void CompileShader();
 };

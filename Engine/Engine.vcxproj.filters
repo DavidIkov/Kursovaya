@@ -18,6 +18,7 @@
     <ClCompile Include="IerarchyClasses\Modifiers\Renderer2D.cpp" />
     <ClCompile Include="Maths\Vector2.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image.cpp" />
+    <ClCompile Include="GraphicsPrimitives\ShaderProgramManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UsefullStuff\ClassEvent.h" />
@@ -48,5 +49,7 @@
     <ClInclude Include="Maths\SPCS.h" />
     <ClInclude Include="Maths\Vector2.h" />
     <ClInclude Include="Dependencies\stb_image\stb_image.h" />
+    <ClInclude Include="UsefullStuff\IDBasedVector.h" />
+    <ClInclude Include="GraphicsPrimitives\ShaderProgramManager.h" />
   </ItemGroup>
 </Project>

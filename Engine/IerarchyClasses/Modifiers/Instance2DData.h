@@ -1,6 +1,6 @@
 #include"../Maths/SPCS.h"
 #include"../UsefullStuff/ClassEvent.h"
-#include"../../GraphicsPrimitives/ShaderProgram.h"
+#include"../../GraphicsPrimitives/ShaderProgramManager.h"
 #include"../../GraphicsPrimitives/Uniform.h"
 #include"ClassesMap.h"
 #include"../../UsefullStuff/ClassEvent.h"
@@ -12,8 +12,6 @@ class Renderer2D;
 class Instance2DData {
 private:
 	friend Renderer2D;
-
-	ShaderProgram Shader;
 	
 	ClassesMap* instancePtr = nullptr;//"this" pointer from actual instance
 
@@ -34,6 +32,7 @@ private:
 	std::vector<float> Vertexes;
 	std::vector<std::string> VertexDataNames;
 	std::vector<unsigned int> VertexDataEndOffsets;
+	std::vector<ShaderProgramTypeEnum> VertexDataTypes;
 
 	void AddVertexDataData(std::string name, unsigned int len, ShaderProgramTypeEnum type);
 	unsigned int FindVertexDataNameInd(const std::string& name) const;
@@ -54,10 +53,26 @@ public:
 private:
 
 
+private:
+	ShaderProgramID ShaderID;
 public:
-
-
-
+	bool CanShaderBeApplyed(ShaderProgramID id) {
+		auto program = ShaderProgramManager::ShaderPrograms[id].ShaderProgramPtr;
+		if (program->VertexBufferData.size() != VertexDataTypes.size()) return false;
+		for (unsigned int i = 0; i < VertexDataTypes.size(); i++)
+			if (program->VertexBufferData[i].Type != VertexDataTypes[i]) return false;
+		return true;
+	}
+	void sShaderID(ShaderProgramID id) {
+#if defined _DEBUG
+		if (not CanShaderBeApplyed(id)) {
+			__debugbreak();//wrong shader settings
+			return;
+		}
+#endif
+		ShaderID = id;
+	}
+public:
 	static const std::type_index TypeIndex;
 
 	Instance2DData* gThis();
