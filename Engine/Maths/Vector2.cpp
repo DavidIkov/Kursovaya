@@ -24,14 +24,21 @@ Vector2::Vector2(float nAx) {
 	newUnit = true;
 }
 
-float Vector2::Length() {
+float Vector2::SqLength() const {
+	if (newLen) {
+		SqLen = X * X + Y * Y;
+		newLen = false;
+	}
+	return SqLen;
+}
+float Vector2::Length() const {
 	if (newLen) {
 		Len = sqrtf(X * X + Y * Y);
 		newLen = false;
 	}
 	return Len;
 }
-Vector2 Vector2::Unit() {
+Vector2 Vector2::Unit() const {
 	if (newUnit) {
 		if (newLen) Length();
 		UnitX = X / Len;

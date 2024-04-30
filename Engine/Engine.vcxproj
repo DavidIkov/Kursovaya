@@ -68,6 +68,7 @@
     <ClInclude Include="UsefullStuff\InsertVectorInVector.h" />
     <ClInclude Include="UsefullStuff\InsertWithFilterInVector.h" />
     <ClInclude Include="UsefullStuff\MoveIntervalInVector.h" />
+    <ClInclude Include="UsefullStuff\RandomNumber.h" />
     <ClInclude Include="UsefullStuff\SwapIntervalsInVector.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -31,6 +31,12 @@ void WindowsManager::Uninitialize() {
     glfwTerminate();
 }
 
+//temp
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_E && action == GLFW_PRESS)
+        std::cout << "pressed e??\n";
+}
 
 Window::Window(int width, int height, const char* name, GLFWmonitor* monitor) {
     GLFWwindow* window = glfwCreateWindow(width, height, name, monitor, NULL);
@@ -43,6 +49,8 @@ Window::Window(int width, int height, const char* name, GLFWmonitor* monitor) {
     WindowPtr = window;
 
     glfwMakeContextCurrent(window);
+
+    glfwSetKeyCallback(WindowPtr, key_callback);
 
     if (glewInit() != GLEW_OK) {
         __debugbreak();//glew failed for some reason
@@ -59,7 +67,7 @@ Window::Window(int width, int height, const char* name, GLFWmonitor* monitor) {
     glSC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));//when downscaling
     glSC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));//when upscaling
 }
-void Window::SetWindowSize(int width, int height) {
+void Window::SetWindowSize(unsigned int width, unsigned int height) {
     glfwSetWindowSize(WindowPtr, width, height);
 }
 void Window::SetWindowColor(float r, float g, float b) {
@@ -75,14 +83,17 @@ bool Window::WindowWaitingToBeClosed() const {
 void Window::Destroy() {
     glfwDestroyWindow(WindowPtr);
 }
-void Window::GetWindowSize(int* width, int* height) const {
-    glfwGetWindowSize(WindowPtr, width, height);
+void Window::GetWindowSize(unsigned int* width, unsigned  int* height) const {
+    int w, h;
+    glfwGetWindowSize(WindowPtr, &w, &h);
+    *width = w;
+    *height = h;
 }
-void Window::UpdateWindowRenderingSize(int width, int height) {
+void Window::UpdateWindowRenderingSize(unsigned int width, unsigned int height) {
     glSC(glViewport(0, 0, width, height));
 }
 void Window::GetCursorPosition(float* x, float* y) const {
-    int width, height;
+    unsigned int width, height;
     GetWindowSize(&width, &height);
 
     double tx, ty;
@@ -96,7 +107,7 @@ void Window::StartUpdatingWindow() {
     glSC(glClear(GL_COLOR_BUFFER_BIT));
 
     if (UpdateWindowRenderingSizeAutomatically) {
-        int width, height;
+        unsigned int width, height;
         GetWindowSize(&width, &height);
         UpdateWindowRenderingSize(width, height);
     }

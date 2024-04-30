@@ -22,13 +22,13 @@ public:
     bool UpdateWindowRenderingSizeAutomatically = true;
     //does not support "share" for now
     Window(int width, int height, const char* name, GLFWmonitor* monitor = nullptr);
-    void SetWindowSize(int width, int height);
+    void SetWindowSize(unsigned int width, unsigned int height);
     void SetWindowColor(float r, float g, float b);
     void SetSwapInterval(unsigned int interval);
     bool WindowWaitingToBeClosed() const;
     void Destroy();
-    void GetWindowSize(int* width, int* height) const;
-    void UpdateWindowRenderingSize(int width, int height);
+    void GetWindowSize(unsigned int* width, unsigned int* height) const;
+    void UpdateWindowRenderingSize(unsigned int width, unsigned int height);
     void GetCursorPosition(float* x, float* y) const;
     void StartUpdatingWindow();
     void EndUpdatingWindow();

@@ -51,5 +51,6 @@
     <ClInclude Include="Dependencies\stb_image\stb_image.h" />
     <ClInclude Include="UsefullStuff\IDBasedVector.h" />
     <ClInclude Include="GraphicsPrimitives\ShaderProgramManager.h" />
+    <ClInclude Include="UsefullStuff\RandomNumber.h" />
   </ItemGroup>
 </Project>
