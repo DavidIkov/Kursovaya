@@ -1,6 +1,7 @@
 #pragma once
+#include"DLLStuff.h"
 #include<math.h>
-
+class Matrix;
 
 
 class Vector2 {
@@ -13,29 +14,34 @@ class Vector2 {
 	mutable float UnitX = 0.f;
 	mutable float UnitY = 0.f;
 public:
-	Vector2();
-	Vector2(float nX, float nY);
-	Vector2(float nAx);
+	DLL_TREATMENT Vector2();
+	DLL_TREATMENT Vector2(float nX, float nY);
+	DLL_TREATMENT Vector2(float nAx);
 	
 
-	float SqLength() const;
-	float Length() const;
-	Vector2 Unit() const;
+	DLL_TREATMENT float SqLength() const;
+	DLL_TREATMENT float Length() const;
+	DLL_TREATMENT Vector2 Unit() const;
 
-	void sX(float nX);
-	float gX() const;
-	void sY(float nY);
-	float gY() const;
+	DLL_TREATMENT void sX(float nX);
+	DLL_TREATMENT float gX() const;
+	DLL_TREATMENT void sY(float nY);
+	DLL_TREATMENT float gY() const;
 
 
-	Vector2 operator+(float num) const { return Vector2(X + num, Y + num); };
-	Vector2 operator-(float num) const { return Vector2(X - num, Y - num); };
-	Vector2 operator*(float num) const { return Vector2(X * num, Y * num); };
-	Vector2 operator/(float num) const { return Vector2(X / num, Y / num); };
+	DLL_TREATMENT Vector2 operator+(float num) const;
+	DLL_TREATMENT Vector2 operator-(float num) const;
+	DLL_TREATMENT Vector2 operator*(float num) const;
+	DLL_TREATMENT Vector2 operator/(float num) const;
 
-	Vector2 operator+(const Vector2& vec) const { return Vector2(X + vec.gX(), Y + vec.gY()); };
-	Vector2 operator-(const Vector2& vec) const { return Vector2(X - vec.gX(), Y - vec.gY()); };
-	Vector2 operator*(const Vector2& vec) const { return Vector2(X * vec.gX(), Y * vec.gY()); };
-	Vector2 operator/(const Vector2& vec) const { return Vector2(X / vec.gX(), Y / vec.gY()); };
+	DLL_TREATMENT Vector2 operator+(const Vector2& vec) const;
+	DLL_TREATMENT Vector2 operator-(const Vector2& vec) const;
+	DLL_TREATMENT Vector2 operator*(const Vector2& vec) const;
+	DLL_TREATMENT Vector2 operator/(const Vector2& vec) const;
+
+	DLL_TREATMENT Vector2 operator+(const Matrix& mat) const;
+	DLL_TREATMENT Vector2 operator-(const Matrix& mat) const;
+	DLL_TREATMENT Vector2 operator*(const Matrix& mat) const;
+	DLL_TREATMENT Vector2 operator/(const Matrix& mat) const;
 };
 

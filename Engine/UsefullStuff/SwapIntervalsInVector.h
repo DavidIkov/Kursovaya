@@ -1,8 +1,9 @@
 #pragma once
+#include"DLLStuff.h"
 #include<vector>
 //need to optimize, this is doing 1 copy + 1 asignment per value(pretty bad) when i THINK maybe it can do just 1 asignment, prob not
 template<typename vecTyp>
-void SwapIntervalsInVector(std::vector<vecTyp>& vec, unsigned int s1, unsigned int l1, unsigned int s2, unsigned int l2) {
+DLL_TREATMENT void SwapIntervalsInVector(std::vector<vecTyp>& vec, unsigned int s1, unsigned int l1, unsigned int s2, unsigned int l2) {
 
 	//fixing weird stuff
 	if (s1 == s2) return;

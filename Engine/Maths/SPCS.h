@@ -1,30 +1,27 @@
 #pragma once
+#include"DLLStuff.h"
 #include"Vector2.h"
+
 ///stands for SCALE or PIXEL COORDINATE SYSTEM
 class SPCS {
-	Vector2 Scale = Vector2(1.f);
-	Vector2 Pixel = Vector2(0.f);
+	Vector2 Scale;
+	Vector2 Pixel;
 public:
-	SPCS() {
+	DLL_TREATMENT SPCS();
+	DLL_TREATMENT SPCS(float nsX, float nsY, float npX, float npY);
 
-	}
-	SPCS(float nsX, float nsY, float npX, float npY) {
-		Scale.sX(nsX);
-		Scale.sY(nsY);
-		Pixel.sX(npX);
-		Pixel.sY(npY);
-	}
+	DLL_TREATMENT Vector2 gSV() const;
+	DLL_TREATMENT const Vector2& grSV() const;
+	DLL_TREATMENT Vector2 gPV() const;
+	DLL_TREATMENT const Vector2& grPV() const;
 
-	const Vector2& gSV() const { return Scale; }
-	const Vector2& gPV() const { return Pixel; }
+	DLL_TREATMENT void sSX(float nsX);
+	DLL_TREATMENT void sSY(float nsY);
+	DLL_TREATMENT void sPX(float npX);
+	DLL_TREATMENT void sPY(float npY);
 
-	void sSX(float nsX) { Scale.sX(nsX); }
-	void sSY(float nsY) { Scale.sY(nsY); }
-	void sPX(float npX) { Pixel.sX(npX); }
-	void sPY(float npY) { Pixel.sY(npY); }
-
-	float gSX() const { return Scale.gX(); }
-	float gSY() const { return Scale.gY(); }
-	float gPX() const { return Pixel.gX(); }
-	float gPY() const { return Pixel.gY(); }
+	DLL_TREATMENT float gSX() const;
+	DLL_TREATMENT float gSY() const;
+	DLL_TREATMENT float gPX() const;
+	DLL_TREATMENT float gPY() const;
 };

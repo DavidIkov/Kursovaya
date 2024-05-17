@@ -1,4 +1,5 @@
 #pragma once
+#include"DLLStuff.h"
 #include<vector>
 typedef unsigned int IDBasedVectorElementID;
 template<typename Type>
@@ -7,7 +8,7 @@ class IDBasedVector {
 	std::vector<bool> Slots;
 	unsigned int FreeMemorySlots = 0;
 public:
-	IDBasedVectorElementID Insert(const Type& toInsert) {
+	DLL_TREATMENT IDBasedVectorElementID Insert(const Type& toInsert) {
 		if (FreeMemorySlots == 0) {
 			Vector.push_back(toInsert);
 			Slots.push_back(true);
@@ -26,7 +27,7 @@ public:
 		__debugbreak();//very weird bug idk honesty, go to debugging hell
 		return -1;
 	}
-	void Remove(IDBasedVectorElementID id) {
+	DLL_TREATMENT void Remove(IDBasedVectorElementID id) {
 
 #if defined _DEBUG
 		if (id >= Vector.size()) __debugbreak();//out of bounds
@@ -37,11 +38,11 @@ public:
 		FreeMemorySlots++;
 	}
 
-	bool Contains(IDBasedVectorElementID id) {
+	DLL_TREATMENT bool Contains(IDBasedVectorElementID id) {
 		if (id >= Vector.size() or not Slots[id]) return false;
 		return true;
 	}
-	const Type& operator[](IDBasedVectorElementID id) {
+	DLL_TREATMENT const Type& operator[](IDBasedVectorElementID id) {
 		if (not Slots[id]) __debugbreak();//empty slot
 		return Vector[id];
 	}

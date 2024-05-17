@@ -1,4 +1,5 @@
 #pragma once
+#include"DLLStuff.h"
 #include<functional>
 #include<vector>
 
@@ -12,11 +13,11 @@ class Event {
 
 public:
 
-	auto Connect(std::function<void(data...)> func) {
+	DLL_TREATMENT auto Connect(std::function<void(data...)> func) {
 		ConnectedFuncs.push_back(func);
 		return func;
 	}
-	void Remove(std::function<void(data...)> func) {
+	DLL_TREATMENT void Remove(std::function<void(data...)> func) {
 		for (unsigned int i = 0; i < ConnectedFuncs.size(); i++) {
 			if (ConnectedFuncs[i] == func) {
 				ConnectedFuncs.erase(ConnectedFuncs.begin() + i);
@@ -25,7 +26,7 @@ public:
 		}
 		__debugbreak();//not found function to delete, maybe its already deleted?
 	}
-	void FireEvent(data... fireData) {
+	DLL_TREATMENT void FireEvent(data... fireData) {
 		for (unsigned int i = 0; i < ConnectedFuncs.size(); i++) {
 			ConnectedFuncs[i](fireData...);
 		}
@@ -41,14 +42,14 @@ class DSEvent {
 
 public:
 
-	auto ConnectBeforeEvent(std::function<void(data...)> func) {
+	DLL_TREATMENT auto ConnectBeforeEvent(std::function<void(data...)> func) {
 		return EventBefore.Connect(func);
 	}
-	auto ConnectAfterEvent(std::function<void(data...)> func) {
+	DLL_TREATMENT auto ConnectAfterEvent(std::function<void(data...)> func) {
 		return EventBefore.Connect(func);
 	}
 
-	void Remove(std::function<void(data...)> func) {
+	DLL_TREATMENT void Remove(std::function<void(data...)> func) {
 		for (unsigned int i = 0; i < EventBefore.ConnectedFuncs.size(); i++) {
 			if (EventBefore.ConnectedFuncs[i] == func) {
 				EventBefore.ConnectedFuncs.erase(EventBefore.ConnectedFuncs.begin() + i);
@@ -63,12 +64,12 @@ public:
 		}
 		__debugbreak();//not found function to delete, maybe its already deleted?
 	}
-	void FireBeforeEventFunctions(data... fireData) {
+	DLL_TREATMENT void FireBeforeEventFunctions(data... fireData) {
 		for (unsigned int i = 0; i < EventBefore.ConnectedFuncs.size(); i++) {
 			EventBefore.ConnectedFuncs[i](fireData...);
 		}
 	}
-	void FireAfterEventFunctions(data... fireData) {
+	DLL_TREATMENT void FireAfterEventFunctions(data... fireData) {
 		for (unsigned int i = 0; i < EventAfter.ConnectedFuncs.size(); i++) {
 			EventAfter.ConnectedFuncs[i](fireData...);
 		}

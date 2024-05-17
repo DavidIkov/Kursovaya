@@ -1,10 +1,11 @@
 #include"Vector2.h"
+#include"Matrix.h"
+
 
 Vector2 operator+(float num, const Vector2& vec) { return Vector2(vec.gX() + num, vec.gY() + num); };
 Vector2 operator-(float num, const Vector2& vec) { return Vector2(vec.gX() - num, vec.gY() - num); };
 Vector2 operator*(float num, const Vector2& vec) { return Vector2(vec.gX() * num, vec.gY() * num); };
 Vector2 operator/(float num, const Vector2& vec) { return Vector2(vec.gX() / num, vec.gY() / num); };
-
 
 
 
@@ -64,3 +65,18 @@ void Vector2::sY(float nY) {
 float Vector2::gY() const {
 	return Y;
 }
+
+Vector2 Vector2::operator+(float num) const { return Vector2(X + num, Y + num); };
+Vector2 Vector2::operator-(float num) const { return Vector2(X - num, Y - num); };
+Vector2 Vector2::operator*(float num) const { return Vector2(X * num, Y * num); };
+Vector2 Vector2::operator/(float num) const { return Vector2(X / num, Y / num); };
+
+Vector2 Vector2::operator+(const Vector2& vec) const { return Vector2(X + vec.gX(), Y + vec.gY()); };
+Vector2 Vector2::operator-(const Vector2& vec) const { return Vector2(X - vec.gX(), Y - vec.gY()); };
+Vector2 Vector2::operator*(const Vector2& vec) const { return Vector2(X * vec.gX(), Y * vec.gY()); };
+Vector2 Vector2::operator/(const Vector2& vec) const { return Vector2(X / vec.gX(), Y / vec.gY()); };
+
+Vector2 Vector2::operator+(const Matrix& mat) const { return Vector2(X + mat[0], Y + mat[1]); };
+Vector2 Vector2::operator-(const Matrix& mat) const { return Vector2(X - mat[0], Y - mat[1]); };
+Vector2 Vector2::operator*(const Matrix& mat) const { return Vector2(X * mat[0], Y * mat[1]); };
+Vector2 Vector2::operator/(const Matrix& mat) const { return Vector2(X / mat[0], Y / mat[1]); };

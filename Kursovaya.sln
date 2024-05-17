@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{7FE5371F-0FDC-4258-9213-E4B66B563067}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BallsSimulation", "BallsSimulation\BallsSimulation.vcxproj", "{8B8D5392-FB9C-4D7C-8B23-888F36C63A16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{7FE5371F-0FDC-4258-9213-E4B66B563067}.Release|x64.Build.0 = Release|x64
 		{7FE5371F-0FDC-4258-9213-E4B66B563067}.Release|x86.ActiveCfg = Release|Win32
 		{7FE5371F-0FDC-4258-9213-E4B66B563067}.Release|x86.Build.0 = Release|Win32
+		{8B8D5392-FB9C-4D7C-8B23-888F36C63A16}.Debug|x64.ActiveCfg = Debug|x64
+		{8B8D5392-FB9C-4D7C-8B23-888F36C63A16}.Debug|x64.Build.0 = Debug|x64
+		{8B8D5392-FB9C-4D7C-8B23-888F36C63A16}.Debug|x86.ActiveCfg = Debug|Win32
+		{8B8D5392-FB9C-4D7C-8B23-888F36C63A16}.Debug|x86.Build.0 = Debug|Win32
+		{8B8D5392-FB9C-4D7C-8B23-888F36C63A16}.Release|x64.ActiveCfg = Release|x64
+		{8B8D5392-FB9C-4D7C-8B23-888F36C63A16}.Release|x64.Build.0 = Release|x64
+		{8B8D5392-FB9C-4D7C-8B23-888F36C63A16}.Release|x86.ActiveCfg = Release|Win32
+		{8B8D5392-FB9C-4D7C-8B23-888F36C63A16}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

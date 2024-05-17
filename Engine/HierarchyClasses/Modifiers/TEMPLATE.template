@@ -1,0 +1,27 @@
+
+.h
+
+#pragma once
+#include"DLLStuff.h"
+#include"ClassesMap.h"
+class TEMPLATE {
+	ClassesMap* InstancePtr = nullptr;//"this" pointer from actual instance
+public:
+	static const std::type_index TypeIndex;
+	TEMPLATE* gThis();
+	DLL_TREATMENT TEMPLATE(ClassesMap* mapPtr);
+};
+
+
+.cpp
+
+#include"TEMPLATE.h"
+
+const std::type_index TEMPLATE::TypeIndex = std::type_index(typeid(TEMPLATE));
+
+TEMPLATE* TEMPLATE::gThis() {
+	return this;
+}
+TEMPLATE::TEMPLATE(ClassesMap* mapPtr) {
+	InstancePtr = mapPtr;
+}

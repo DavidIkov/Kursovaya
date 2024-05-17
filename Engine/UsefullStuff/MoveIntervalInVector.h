@@ -1,6 +1,7 @@
 #pragma once
+#include"DLLStuff.h"
 #include<vector>
 template<typename vecTyp>
-void MoveIntervalInVector(std::vector<vecTyp>& vec, unsigned int s, unsigned int l, unsigned int ni) {
+DLL_TREATMENT void MoveIntervalInVector(std::vector<vecTyp>& vec, unsigned int s, unsigned int l, unsigned int ni) {
 	__debugbreak();
 }

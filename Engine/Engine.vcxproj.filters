@@ -1,24 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="GraphicsPrimitives\BufferLayout.cpp" />
-    <ClCompile Include="GraphicsPrimitives\IndexBuffer.cpp" />
-    <ClCompile Include="GraphicsPrimitives\Shader.cpp" />
-    <ClCompile Include="GraphicsPrimitives\ShaderProgam.cpp" />
-    <ClCompile Include="GraphicsPrimitives\Texture.cpp" />
-    <ClCompile Include="GraphicsPrimitives\Uniform.cpp" />
-    <ClCompile Include="GraphicsPrimitives\VertexArray.cpp" />
-    <ClCompile Include="GraphicsPrimitives\VertexBuffer.cpp" />
-    <ClCompile Include="GraphicsPrimitives\WindowsManager.cpp" />
-    <ClCompile Include="IerarchyClasses\Classes\Frame.cpp" />
-    <ClCompile Include="IerarchyClasses\Classes\Program.cpp" />
-    <ClCompile Include="IerarchyClasses\Modifiers\Instance.cpp" />
-    <ClCompile Include="IerarchyClasses\Modifiers\Instance2DData.cpp" />
-    <ClCompile Include="IerarchyClasses\Modifiers\Renderer2D.cpp" />
+    <ClCompile Include="Graphics\BufferLayout.cpp" />
+    <ClCompile Include="Graphics\IndexBuffer.cpp" />
+    <ClCompile Include="Graphics\Shader.cpp" />
+    <ClCompile Include="Graphics\ShaderProgam.cpp" />
+    <ClCompile Include="Graphics\Texture.cpp" />
+    <ClCompile Include="Graphics\Uniform.cpp" />
+    <ClCompile Include="Graphics\VertexArray.cpp" />
+    <ClCompile Include="Graphics\VertexBuffer.cpp" />
+    <ClCompile Include="Graphics\WindowsManager.cpp" />
+    <ClCompile Include="HierarchyClasses\Modifiers\Instance.cpp" />
     <ClCompile Include="Maths\Vector2.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image.cpp" />
-    <ClCompile Include="GraphicsPrimitives\ShaderProgramManager.cpp" />
+    <ClCompile Include="Graphics\ShaderProgramsManager.cpp" />
+    <ClCompile Include="UsefullStuff\RandomNumber.cpp" />
+    <ClCompile Include="UsefullStuff\Time.cpp" />
+    <ClCompile Include="HierarchyClasses\Classes\Frame.cpp" />
+    <ClCompile Include="HierarchyClasses\Classes\HierarchyRoot.cpp" />
+    <ClCompile Include="HierarchyClasses\Modifiers\Camera2D.cpp" />
+    <ClCompile Include="HierarchyClasses\Modifiers\Camera3D.cpp" />
+    <ClCompile Include="HierarchyClasses\Modifiers\Object3DData.cpp" />
+    <ClCompile Include="HierarchyClasses\Modifiers\TranslatorFrom3D.cpp" />
+    <ClCompile Include="HierarchyClasses\Modifiers\Object2DData.cpp" />
+    <ClCompile Include="HierarchyClasses\Modifiers\Renderer.cpp" />
+    <ClCompile Include="HierarchyClasses\Modifiers\TranslatorFrom2D.cpp" />
+    <ClCompile Include="HierarchyClasses\Modifiers\WindowContainer.cpp" />
+    <ClCompile Include="Maths\Matrix.cpp" />
+    <ClCompile Include="Maths\SPCS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UsefullStuff\ClassEvent.h" />
@@ -29,28 +38,40 @@
     <ClInclude Include="UsefullStuff\InsertWithFilterInVector.h" />
     <ClInclude Include="UsefullStuff\MoveIntervalInVector.h" />
     <ClInclude Include="UsefullStuff\SwapIntervalsInVector.h" />
-    <ClInclude Include="GraphicsPrimitives\BufferLayout.h" />
-    <ClInclude Include="GraphicsPrimitives\Debug.h" />
-    <ClInclude Include="GraphicsPrimitives\IndexBuffer.h" />
-    <ClInclude Include="GraphicsPrimitives\Shader.h" />
-    <ClInclude Include="GraphicsPrimitives\ShaderProgram.h" />
-    <ClInclude Include="GraphicsPrimitives\Texture.h" />
-    <ClInclude Include="GraphicsPrimitives\Uniform.h" />
-    <ClInclude Include="GraphicsPrimitives\VertexArray.h" />
-    <ClInclude Include="GraphicsPrimitives\VertexBuffer.h" />
-    <ClInclude Include="GraphicsPrimitives\WindowsManager.h" />
-    <ClInclude Include="IerarchyClasses\Classes\Frame.h" />
-    <ClInclude Include="IerarchyClasses\Classes\Program.h" />
-    <ClInclude Include="IerarchyClasses\Modifiers\ClassesMap.h" />
-    <ClInclude Include="IerarchyClasses\Modifiers\Instance.h" />
-    <ClInclude Include="IerarchyClasses\Modifiers\Instance2DData.h" />
-    <ClInclude Include="IerarchyClasses\Modifiers\Renderer2D.h" />
+    <ClInclude Include="Graphics\BufferLayout.h" />
+    <ClInclude Include="Graphics\Debug.h" />
+    <ClInclude Include="Graphics\IndexBuffer.h" />
+    <ClInclude Include="Graphics\Shader.h" />
+    <ClInclude Include="Graphics\ShaderProgram.h" />
+    <ClInclude Include="Graphics\Texture.h" />
+    <ClInclude Include="Graphics\Uniform.h" />
+    <ClInclude Include="Graphics\VertexArray.h" />
+    <ClInclude Include="Graphics\VertexBuffer.h" />
+    <ClInclude Include="Graphics\WindowsManager.h" />
+    <ClInclude Include="HierarchyClasses\Classes\Frame.h" />
+    <ClInclude Include="HierarchyClasses\Classes\HierarchyRoot.h" />
+    <ClInclude Include="HierarchyClasses\Modifiers\ClassesMap.h" />
+    <ClInclude Include="HierarchyClasses\Modifiers\Instance.h" />
     <ClInclude Include="Maths\Matrix.h" />
     <ClInclude Include="Maths\SPCS.h" />
     <ClInclude Include="Maths\Vector2.h" />
     <ClInclude Include="Dependencies\stb_image\stb_image.h" />
     <ClInclude Include="UsefullStuff\IDBasedVector.h" />
-    <ClInclude Include="GraphicsPrimitives\ShaderProgramManager.h" />
+    <ClInclude Include="Graphics\ShaderProgramsManager.h" />
     <ClInclude Include="UsefullStuff\RandomNumber.h" />
+    <ClInclude Include="DLLStuff.h" />
+    <ClInclude Include="UsefullStuff\Time.h" />
+    <ClInclude Include="HierarchyClasses\Modifiers\TranslatorFrom3D.h" />
+    <ClInclude Include="HierarchyClasses\Modifiers\Object3DData.h" />
+    <ClInclude Include="HierarchyClasses\Modifiers\Camera2D.h" />
+    <ClInclude Include="HierarchyClasses\Modifiers\Camera3D.h" />
+    <ClInclude Include="HierarchyClasses\Classes\DimensionalTranslator2Dto3D.h" />
+    <ClInclude Include="HierarchyClasses\Modifiers\Object2DData.h" />
+    <ClInclude Include="HierarchyClasses\Modifiers\Renderer.h" />
+    <ClInclude Include="HierarchyClasses\Modifiers\TranslatorFrom2D.h" />
+    <ClInclude Include="HierarchyClasses\Modifiers\WindowContainer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="HierarchyClasses\Modifiers\TEMPLATE.template" />
   </ItemGroup>
 </Project>
