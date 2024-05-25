@@ -11,15 +11,12 @@
     <ClCompile Include="Graphics\VertexBuffer.cpp" />
     <ClCompile Include="Graphics\WindowsManager.cpp" />
     <ClCompile Include="HierarchyClasses\Modifiers\Instance.cpp" />
-    <ClCompile Include="Maths\Vector2.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image.cpp" />
     <ClCompile Include="Graphics\ShaderProgramsManager.cpp" />
     <ClCompile Include="UsefullStuff\RandomNumber.cpp" />
     <ClCompile Include="UsefullStuff\Time.cpp" />
     <ClCompile Include="HierarchyClasses\Classes\Frame.cpp" />
     <ClCompile Include="HierarchyClasses\Classes\HierarchyRoot.cpp" />
-    <ClCompile Include="HierarchyClasses\Modifiers\Camera2D.cpp" />
-    <ClCompile Include="HierarchyClasses\Modifiers\Camera3D.cpp" />
     <ClCompile Include="HierarchyClasses\Modifiers\Object3DData.cpp" />
     <ClCompile Include="HierarchyClasses\Modifiers\TranslatorFrom3D.cpp" />
     <ClCompile Include="HierarchyClasses\Modifiers\Object2DData.cpp" />
@@ -28,6 +25,10 @@
     <ClCompile Include="HierarchyClasses\Modifiers\WindowContainer.cpp" />
     <ClCompile Include="Maths\Matrix.cpp" />
     <ClCompile Include="Maths\SPCS.cpp" />
+    <ClCompile Include="Maths\Vector2.cpp" />
+    <ClCompile Include="Maths\Vector3.cpp" />
+    <ClCompile Include="HierarchyClasses\Classes\DimensionalTranslatorFrom3Dto2D.cpp" />
+    <ClCompile Include="HierarchyClasses\Classes\Object.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UsefullStuff\ClassEvent.h" />
@@ -54,7 +55,6 @@
     <ClInclude Include="HierarchyClasses\Modifiers\Instance.h" />
     <ClInclude Include="Maths\Matrix.h" />
     <ClInclude Include="Maths\SPCS.h" />
-    <ClInclude Include="Maths\Vector2.h" />
     <ClInclude Include="Dependencies\stb_image\stb_image.h" />
     <ClInclude Include="UsefullStuff\IDBasedVector.h" />
     <ClInclude Include="Graphics\ShaderProgramsManager.h" />
@@ -63,13 +63,14 @@
     <ClInclude Include="UsefullStuff\Time.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\TranslatorFrom3D.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\Object3DData.h" />
-    <ClInclude Include="HierarchyClasses\Modifiers\Camera2D.h" />
-    <ClInclude Include="HierarchyClasses\Modifiers\Camera3D.h" />
-    <ClInclude Include="HierarchyClasses\Classes\DimensionalTranslator2Dto3D.h" />
+    <ClInclude Include="HierarchyClasses\Classes\DimensionalTranslator3Dto2D.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\Object2DData.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\Renderer.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\TranslatorFrom2D.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\WindowContainer.h" />
+    <ClInclude Include="Maths\Vector2.h" />
+    <ClInclude Include="Maths\Vector3.h" />
+    <ClInclude Include="HierarchyClasses\Classes\Object3D.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="HierarchyClasses\Modifiers\TEMPLATE.template" />

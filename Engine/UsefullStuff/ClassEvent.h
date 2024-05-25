@@ -46,7 +46,7 @@ public:
 		return EventBefore.Connect(func);
 	}
 	DLL_TREATMENT auto ConnectAfterEvent(std::function<void(data...)> func) {
-		return EventBefore.Connect(func);
+		return EventAfter.Connect(func);
 	}
 
 	DLL_TREATMENT void Remove(std::function<void(data...)> func) {

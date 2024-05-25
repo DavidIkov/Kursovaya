@@ -7,17 +7,22 @@ class Matrix;
 class Vector2 {
 	float X = 0.f;
 	float Y = 0.f;
-	mutable bool newLen = false;
+	mutable bool newLen = true;
 	mutable float Len = 0.f;
 	mutable float SqLen = 0.f;
-	mutable bool newUnit = false;
+	mutable bool newUnit = true;
 	mutable float UnitX = 0.f;
 	mutable float UnitY = 0.f;
 public:
+
+	DLL_TREATMENT static void RotateVectors(const Vector2& xv, const Vector2& yv, float angle, Vector2& xvTOWRITE, Vector2& yvTOWRITE);
+
 	DLL_TREATMENT Vector2();
 	DLL_TREATMENT Vector2(float nX, float nY);
 	DLL_TREATMENT Vector2(float nAx);
+	DLL_TREATMENT Vector2(const Matrix&& mat);
 	
+	DLL_TREATMENT Vector2& operator=(const Vector2& toCopy);
 
 	DLL_TREATMENT float SqLength() const;
 	DLL_TREATMENT float Length() const;

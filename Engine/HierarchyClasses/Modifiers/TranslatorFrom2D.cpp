@@ -1,15 +1,68 @@
 #include"TranslatorFrom2D.h"
 #include"UsefullStuff/FilterVector.h"
 #include"Instance.h"
+#include"Object2DData.h"
+#include"TranslatorFrom3D.h"
+#include"Object3DData.h"
 
 const std::type_index TranslatorFrom2D::TypeIndex = std::type_index(typeid(TranslatorFrom2D));
+
+
+void TranslatorFrom2D::RecalculateCameraActualCords(bool tryToUpdateChildren) {
+	ActualCameraPosition = Vector2((float)Width / 2, (float)Height / 2) * CameraPosition.grSV() + CameraPosition.grPV();
+	ActualCameraSize = Vector2((float)Width, (float)Height) * CameraSize.grSV() + CameraSize.grPV();
+	ActualCameraRotationMatrix = Matrix(2, 2, { cosf(CameraRotation),sinf(CameraRotation),-sinf(CameraRotation),cosf(CameraRotation) });
+
+	if (AutomaticallyRecalculateActualCords) {
+		auto& children = InstancePtr->FindTypePtr<Instance>(Instance::TypeIndex)->grChildren();
+		for (unsigned int i = 0; i < children.size(); i++) {
+			Object2DData* child2d = children[i]->FindTypePtr<Object2DData>(Object2DData::TypeIndex);
+			if (child2d != nullptr) {
+				child2d->RecalculateActualCords(true);
+				child2d->UpdateVertexesCordsInFilteredOrder(true);
+			}
+		}
+	}
+}
+
+void TranslatorFrom2D::sCameraSize(const SPCS&& nSize) {
+	CameraSize = nSize;
+	RecalculateCameraActualCords(true);
+}
+void TranslatorFrom2D::sCameraPosition(const SPCS&& nPos) {
+	CameraPosition = nPos;
+	RecalculateCameraActualCords(true);
+}
+void TranslatorFrom2D::sCameraRotation(float nRot) {
+	CameraRotation = nRot;
+	RecalculateCameraActualCords(true);
+}
+
+const SPCS& TranslatorFrom2D::grCameraSize() const {
+	return CameraSize;
+}
+SPCS TranslatorFrom2D::gCameraSize() const {
+	return CameraSize;
+}
+const SPCS& TranslatorFrom2D::grCameraPosition() const {
+	return CameraPosition;
+}
+SPCS TranslatorFrom2D::gCameraPosition() const {
+	return CameraPosition;
+}
+const float& TranslatorFrom2D::grCameraRotation() const {
+	return CameraRotation;
+}
+float TranslatorFrom2D::gCameraRotation() const {
+	return CameraRotation;
+}
+
 
 void TranslatorFrom2D::processInsertionOfObject(Object2DData* obj) {
 	FilteredOrder[obj->TranslatorFilteredOrderInd].ShaderID = obj->ShaderID;
 	FilteredOrder[obj->TranslatorFilteredOrderInd].UniformDataUpdateEvent = &obj->UpdateUniformDataEvent;
+	FilteredOrder[obj->TranslatorFilteredOrderInd].RenderingObjectTypeInd = obj->RenderingObjectTypeInd;
 	FilteredOrder[obj->TranslatorFilteredOrderInd].IntContainer = &obj->TranslatorFilteredOrderInd;
-	obj->UpdateVertexesCordsInFilteredOrder(false);
-	obj->UpdateVertexesRenderingOrderInFilteredOrder(false);
 }
 
 unsigned int TranslatorFrom2D::recursive_IterateThroughChildrenToFilter(Instance* curInst, unsigned int startInd) {
@@ -31,10 +84,12 @@ unsigned int TranslatorFrom2D::recursive_IterateThroughChildrenToFilter(Instance
 		obj2dChild->TranslatorFilteredOrderInd = startInd + i;
 
 		if (child->IsContains(TranslatorFrom2D::TypeIndex)) {
-			FilteredOrder[startInd + i] = { &child->FindTypePtr<TranslatorFrom2D>(TypeIndex)->FilteredOrder,{},{},obj2dChild->ShaderID,&obj2dChild->UpdateUniformDataEvent,obj2dChild->RenderingObjectTypeInd,&obj2dChild->TranslatorFilteredOrderInd };
+			FilteredOrder[startInd + i] = { false,&child->FindTypePtr<TranslatorFrom2D>(TypeIndex)->FilteredOrder,{},obj2dChild->ShaderID,&obj2dChild->UpdateUniformDataEvent,obj2dChild->RenderingObjectTypeInd,&obj2dChild->TranslatorFilteredOrderInd };
 		}
 		else if (child->IsContains(TranslatorFrom3D::TypeIndex)) {
-			__debugbreak();//havent finished! when im here it will be same as if child have 2d translator modifier, only change is filtered order pointer
+			FilteredOrder[startInd + i] = { true,&child->FindTypePtr<TranslatorFrom3D>(TranslatorFrom3D::TypeIndex)->Objects,{}, obj2dChild->ShaderID,
+				&obj2dChild->UpdateUniformDataEvent,obj2dChild->RenderingObjectTypeInd,&obj2dChild->TranslatorFilteredOrderInd };
+
 		}
 		else {//for sure contains Object2DData
 			processInsertionOfObject(obj2dChild);
@@ -74,16 +129,20 @@ void TranslatorFrom2D::InsertInFilteredOrder(ClassesMap* object, ClassesMap* new
 	unsigned int insertLength = 0;
 
 	//insert
-	std::vector<Renderer::FilteredOrderElement>* filteredOrderPtr = nullptr;
+	std::vector<Renderer::ObjectsVectorElement>* filteredOrderPtr = nullptr;
 	if (object->IsContains(TypeIndex)) {
 		FilteredOrder.insert(FilteredOrder.begin() + insertInd, 
-			{ &object->FindTypePtr<TranslatorFrom2D>(TypeIndex)->FilteredOrder,{},{},obj2dData->ShaderID,
+			{ false,&object->FindTypePtr<TranslatorFrom2D>(TypeIndex)->FilteredOrder,{},obj2dData->ShaderID,
 			&obj2dData->UpdateUniformDataEvent,obj2dData->RenderingObjectTypeInd,&obj2dData->TranslatorFilteredOrderInd });
 
 		insertLength = 1;
 	}
 	else if (object->IsContains(TranslatorFrom3D::TypeIndex)) {
-		__debugbreak();//not finished
+		FilteredOrder.insert(FilteredOrder.begin() + insertInd,
+			{ true,&object->FindTypePtr<TranslatorFrom3D>(TranslatorFrom3D::TypeIndex)->Objects,{},obj2dData->ShaderID,
+			&obj2dData->UpdateUniformDataEvent,obj2dData->RenderingObjectTypeInd,&obj2dData->TranslatorFilteredOrderInd });
+
+		insertLength = 1;
 	}
 	else {
 		FilteredOrder.insert(FilteredOrder.begin() + insertInd, obj2dData->DependentElementsAmountInFilteredOrder, {});
@@ -110,12 +169,16 @@ void TranslatorFrom2D::sResolution(unsigned int w, unsigned int h){
 	Width = w;
 	Height = h;
 	
-	auto& children = InstancePtr->FindTypePtr<Instance>(Instance::TypeIndex)->grChildren();
-	for (unsigned int i = 0; i < children.size(); i++) {
-		Object2DData* child2d = children[i]->FindTypePtr<Object2DData>(Object2DData::TypeIndex);
-		if (child2d != nullptr) {
-			child2d->RecalculateActualCords(true);
-			child2d->UpdateVertexesCordsInFilteredOrder(true);
+	RecalculateCameraActualCords(false);
+
+	if (AutomaticallyRecalculateActualCords) {
+		auto& children = InstancePtr->FindTypePtr<Instance>(Instance::TypeIndex)->grChildren();
+		for (unsigned int i = 0; i < children.size(); i++) {
+			Object2DData* child2d = children[i]->FindTypePtr<Object2DData>(Object2DData::TypeIndex);
+			if (child2d != nullptr) {
+				child2d->RecalculateActualCords(true);
+				child2d->UpdateVertexesCordsInFilteredOrder(true);
+			}
 		}
 	}
 }
@@ -127,14 +190,13 @@ Vector2 TranslatorFrom2D::GetPositionOnWindow(Vector2 positionInPixels) const {
 	}
 	else if (InstancePtr->IsContains(Object3DData::TypeIndex)) {
 		__debugbreak();//unfinished
+		return Vector2();
 	}
 	else if (InstancePtr->IsContains(Renderer::TypeIndex)) {
 		return positionInPixels / Vector2((float)Width / 2, (float)Height / 2);
 	}
-	else {
-		__debugbreak();//idk very strange how you can end up here
-		return Vector2();
-	}
+	__debugbreak();//idk very strange how you can end up here
+	return Vector2();
 }
 
 TranslatorFrom2D* TranslatorFrom2D::gThis() {

@@ -1,14 +1,15 @@
 #include"ShaderProgram.h"
 
 
-std::string GetShaderProgramTypeEnumName(ShaderProgramTypeEnum type) {
+std::string GetShaderProgramDataTypeName(ShaderProgramDataTypes type) {
 	switch (type) {
-	case ShaderProgramTypeEnum::vector2: return "vec2";
-	case ShaderProgramTypeEnum::vector3: return "vec3";
-	case ShaderProgramTypeEnum::vector4: return "vec4";
-	case ShaderProgramTypeEnum::floatType: return "float";
-	case ShaderProgramTypeEnum::martix4by4: return "mat4";
-	case ShaderProgramTypeEnum::image2D: return "sampler2D";
+	case ShaderProgramDataTypes::vector2: return "vec2";
+	case ShaderProgramDataTypes::vector3: return "vec3";
+	case ShaderProgramDataTypes::vector4: return "vec4";
+	case ShaderProgramDataTypes::floatType: return "float";
+	case ShaderProgramDataTypes::martix4by4: return "mat4";
+	case ShaderProgramDataTypes::image2D: return "sampler2D";
+	case ShaderProgramDataTypes::integerType: return "int";
 
 	}
 	__debugbreak();//not found type
@@ -39,6 +40,8 @@ void ShaderProgram::CompileShader() {
 
 	glSC(ID = glCreateProgram());
 
+	vUniform.ShaderProgID = ID;
+
 	std::string vertexShader;
 	vertexShader += "#version ";
 	vertexShader += std::to_string(ShaderVersion);
@@ -48,7 +51,7 @@ void ShaderProgram::CompileShader() {
 			vertexShader += "layout(location=";
 			vertexShader += std::to_string(i);
 			vertexShader += ") in ";
-			vertexShader += GetShaderProgramTypeEnumName(VertexBufferData[i].Type);
+			vertexShader += GetShaderProgramDataTypeName(VertexBufferData[i].Type);
 			vertexShader += " i_";
 			vertexShader += VertexBufferData[i].Name;
 			vertexShader += ";\n";
@@ -57,7 +60,7 @@ void ShaderProgram::CompileShader() {
 	{//apply transfer data
 		for (unsigned int i = 0; i < TransferData.size(); i++) {
 			vertexShader += "out ";
-			vertexShader += GetShaderProgramTypeEnumName(TransferData[i].Type);
+			vertexShader += GetShaderProgramDataTypeName(TransferData[i].Type);
 			vertexShader += " t_";
 			vertexShader += TransferData[i].Name;
 			vertexShader += ";\n";
@@ -66,9 +69,14 @@ void ShaderProgram::CompileShader() {
 	{//apply uniforms
 		for (unsigned int i = 0; i < VertexShaderUniformsData.size(); i++) {
 			vertexShader += "uniform ";
-			vertexShader += GetShaderProgramTypeEnumName(VertexShaderUniformsData[i].Type);
-			vertexShader += " u_";
+			vertexShader += GetShaderProgramDataTypeName(VertexShaderUniformsData[i].Type);
+			vertexShader += ((VertexShaderUniformsData[i].MaxArrayCapacity > 0) ? " ua_" : " u_");
 			vertexShader += VertexShaderUniformsData[i].Name;
+			if (VertexShaderUniformsData[i].MaxArrayCapacity > 0) {
+				vertexShader += "[";
+				vertexShader += std::to_string(VertexShaderUniformsData[i].MaxArrayCapacity);
+				vertexShader += "]";
+			}
 			vertexShader += ";\n";
 		}
 	}
@@ -119,7 +127,7 @@ void ShaderProgram::CompileShader() {
 	{//apply transfer data
 		for (unsigned int i = 0; i < TransferData.size(); i++) {
 			fragmentShader += "in ";
-			fragmentShader += GetShaderProgramTypeEnumName(TransferData[i].Type);
+			fragmentShader += GetShaderProgramDataTypeName(TransferData[i].Type);
 			fragmentShader += " t_";
 			fragmentShader += TransferData[i].Name;
 			fragmentShader += ";\n";
@@ -128,9 +136,14 @@ void ShaderProgram::CompileShader() {
 	{//apply uniforms
 		for (unsigned int i = 0; i < FragmentShaderUniformsData.size(); i++) {
 			fragmentShader += "uniform ";
-			fragmentShader += GetShaderProgramTypeEnumName(FragmentShaderUniformsData[i].Type);
-			fragmentShader += " u_";
+			fragmentShader += GetShaderProgramDataTypeName(FragmentShaderUniformsData[i].Type);
+			fragmentShader += ((FragmentShaderUniformsData[i].MaxArrayCapacity > 0) ? " ua_" : " u_");
 			fragmentShader += FragmentShaderUniformsData[i].Name;
+			if (FragmentShaderUniformsData[i].MaxArrayCapacity > 0) {
+				fragmentShader += "[";
+				fragmentShader += std::to_string(FragmentShaderUniformsData[i].MaxArrayCapacity);
+				fragmentShader += "]";
+			}
 			fragmentShader += ";\n";
 		}
 	}
@@ -163,6 +176,7 @@ void ShaderProgram::CompileShader() {
 				glGetShaderInfoLog(fragmentShaderID, length, &length, message);
 				std::cout << "SHADER compilation error:" << std::string(message);
 				delete[] message;
+				__debugbreak();
 			}
 		}
 #endif
@@ -187,14 +201,11 @@ void ShaderProgram::CompileShader() {
 			glGetProgramInfoLog(ID, length, &length, message);
 			std::cout << "SHADER LINKER error:" << std::string(message);
 			delete[] message;
+			__debugbreak();
 		}
 	}
 #endif
 
 	glSC(glDeleteShader(vertexShaderID));
 	glSC(glDeleteShader(fragmentShaderID));
-
-
-	/*std::cout << vertexShader << '\n';
-	std::cout << fragmentShader << '\n';*/
 }

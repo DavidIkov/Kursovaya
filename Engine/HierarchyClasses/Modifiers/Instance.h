@@ -12,6 +12,8 @@ class Instance {
 	ClassesMap* instancePtr = nullptr;//"this" pointer from actual instance
 	friend class Object2DData;
 	friend class TranslatorFrom2D;
+	friend class Object3DData;
+	friend class TranslatorFrom3D;
 
 	std::unordered_map<std::string, std::byte*> InheritancePointers;
 

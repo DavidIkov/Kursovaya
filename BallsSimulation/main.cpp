@@ -6,6 +6,8 @@
 
 #include"HierarchyClasses/Classes/HierarchyRoot.h"
 #include"HierarchyClasses/Classes/Frame.h"
+#include"HierarchyClasses/Classes/DimensionalTranslator3Dto2D.h"
+#include"HierarchyClasses/Classes/Object3D.h"
 
 #include"Graphics/WindowsManager.h"
 
@@ -20,7 +22,7 @@
 
 
 
-unsigned int circlesAmount = 30;
+unsigned int circlesAmount = 100;
 
 float circleSize = 30;
 
@@ -103,24 +105,67 @@ int main() {
     ShaderProgramID shaderID = ShaderProgramsManager::AddShaderProgram("Circle", &shader);
 
 
-    shader.VertexBufferData.push_back({ ShaderProgramTypeEnum::vector2,"ScreenPosition" });
-    shader.VertexBufferData.push_back({ ShaderProgramTypeEnum::vector2,"LocalPosition" });
-    shader.VertexBufferData.push_back({ ShaderProgramTypeEnum::vector4,"Color" });
+    shader.VertexBufferData.push_back({ ShaderProgramDataTypes::vector2,"ScreenPosition" });
+    shader.VertexBufferData.push_back({ ShaderProgramDataTypes::vector2,"LocalPosition" });
+    shader.VertexBufferData.push_back({ ShaderProgramDataTypes::vector4,"Color" });
 
-    shader.TransferData.push_back({ ShaderProgramTypeEnum::vector4 ,"VertexColor" });
+    shader.TransferData.push_back({ ShaderProgramDataTypes::vector4 ,"VertexColor" });
     shader.VertexShaderCodeParts.push_back("t_VertexColor=i_Color;\ngl_Position = vec4(i_ScreenPosition.x, i_ScreenPosition.y, 0.f, 1.f);");
     shader.FragmentShaderCodeParts.push_back("o_PixelColor=t_VertexColor;");
 
-    //ShaderProgram shader2=shader;
-    //ShaderProgramID shader2ID = ShaderProgramManager::AddShaderProgram("main shader with circle", &shader2);
-
-    shader.TransferData.push_back({ ShaderProgramTypeEnum::vector2,"LocalPosition" });
-    shader.VertexShaderCodeParts.push_back("t_LocalPosition=vec2(i_LocalPosition.x, i_LocalPosition.y);");
+    shader.TransferData.push_back({ ShaderProgramDataTypes::vector2,"LocalPosition" });
+    shader.VertexShaderCodeParts.push_back("t_LocalPosition=i_LocalPosition;");
     shader.FragmentShaderCodeParts.push_back("if (t_LocalPosition.x*t_LocalPosition.x+t_LocalPosition.y*t_LocalPosition.y>1) o_PixelColor=vec4(0.f,0.f,0.f,0.f);");
 
     shader.CompileShader();
 
+    ShaderProgram shader3d;
+    ShaderProgramID shader3dID = ShaderProgramsManager::AddShaderProgram("3d shader", &shader3d);
+    shader3d.VertexBufferData.push_back({ ShaderProgramDataTypes::vector3,"SpacePosition" });
+    shader3d.VertexBufferData.push_back({ ShaderProgramDataTypes::vector3,"LocalPosition" });
+    shader3d.VertexBufferData.push_back({ ShaderProgramDataTypes::vector4,"Color" });
+    shader3d.VertexBufferData.push_back({ ShaderProgramDataTypes::vector3,"SpaceNormal" });
+    shader3d.VertexBufferData.push_back({ ShaderProgramDataTypes::vector3,"LocalNormal" });
+
+    shader3d.TransferData.push_back({ ShaderProgramDataTypes::vector4 ,"VertexColor" });
+    shader3d.TransferData.push_back({ ShaderProgramDataTypes::vector3,"LocalPosition" });
+    shader3d.TransferData.push_back({ ShaderProgramDataTypes::vector3,"SpacePosition" });
+    shader3d.TransferData.push_back({ ShaderProgramDataTypes::vector3,"SpaceNormal" });
+
+    shader3d.VertexShaderCodeParts.push_back("t_VertexColor=i_Color;\ngl_Position = vec4(i_SpacePosition.x, i_SpacePosition.y, i_SpacePosition.z, 1.f);");
+    shader3d.VertexShaderCodeParts.push_back("t_SpacePosition=gl_Position.xyz; t_SpaceNormal=i_SpaceNormal;");
+    shader3d.FragmentShaderCodeParts.push_back("float brightness = -1;");
+    shader3d.FragmentShaderCodeParts.push_back("for (int i=0;i<u_LightSourcesAmount;i++) brightness=max(brightness,dot(t_SpaceNormal,ua_LightSources[i]-t_SpacePosition));");
+    shader3d.FragmentShaderCodeParts.push_back("o_PixelColor=vec4(t_VertexColor.xyz*(brightness+1)/2,t_VertexColor.w);");
+
+    //shader3d.FragmentShaderCodeParts.push_back("o_PixelColor=vec4(dot(t_SpaceNormal,pos-t_SpacePosition)*t_VertexColor.xyz*u_LightSourcesAmount,1.f);");
+
+    shader3d.FragmentShaderUniformsData.push_back({ ShaderProgramDataTypes::vector3, "LightSources", 32 });
+    shader3d.FragmentShaderUniformsData.push_back({ ShaderProgramDataTypes::integerType, "LightSourcesAmount" });
+
+
+    shader3d.VertexShaderCodeParts.push_back("t_LocalPosition=i_LocalPosition;");
+
+    shader3d.CompileShader();
+
+    shader3d.gUniform().SetUniform1i("u_LightSourcesAmount", 1);
+    shader3d.gUniform().SetUniform3fv("ua_LightSources", { 0,0,0 });
+   
+
     HierarchyRoot* hierarchy = wind.Hierarchy;
+
+    //hierarchy->sCameraSize({ 3,3,0,0 });
+    //hierarchy->sCameraPosition({ -1,0,0,0 });
+
+    
+
+    
+
+
+
+
+    hierarchy->AutomaticallyUpdateVertexesCordsInFilteredOrder = false;
+    hierarchy->AutomaticallyRecalculateActualCords = false;
 
 
     /* Frame* frame = new Frame;
@@ -151,23 +196,51 @@ int main() {
      frame2->Position.sSY(1.f);
      frame2->Size.sSX(1.f);*/
 
+
+    wind.GetWindowSize(&width, &height);
+
+    hierarchy->sResolution(width, height);
+
+    DimensionalTranslator3Dto2D* translatorTo3D = new DimensionalTranslator3Dto2D;
+    translatorTo3D->sSize({ 1,1,0,0 });
+    translatorTo3D->sParent(hierarchy);
+    translatorTo3D->RecalculateActualCords(false);
+
+
+
+    Object3D* cube = new Object3D;
+    cube->ApplyVertexTemplate(Vertex3DTemplates::Cube, { 1 });
+    cube->sPosition({ 0,0,4 });
+    cube->sSize({ 1,1,2 });
+    //cube->sRotation(Matrix::FromAnglesXYZ(0.f, 40.f / 180.f * 3.14f, 0.f));
+    cube->sShaderID(shader3dID);
+    cube->sParent(translatorTo3D);
+    for (unsigned int i = 0; i < 8; i++) {
+        cube->SetVertexParameterByIndex(i, 1, { RandNum(0,1),RandNum(0,1),RandNum(0,1),1.f });
+    }
+
+   /* cube->UpdateVertexesRenderingOrderInFilteredOrder();
+    cube->RecalculateActualCords(false);
+    cube->UpdateVertexesCordsInFilteredOrder(false);*/
+
     /*{
         Frame* frame2 = new Frame;
         frame2->sShaderID(shaderID);
-        frame2->ApplyVertexTemplate(VertexTemplateEnum::Square);
-        frame2->SetVertexesParameterByIndex(1, { 0.5f,0.1f,0.7f,1.f });
+        frame2->ApplyVertexTemplate(Vertex2DTemplates::Square);
+        frame2->SetVertexesParameterByIndex(2, { 0.5f,0.1f,0.7f,1.f });
         frame2->sPriority(2.f);
         
         frame2->sParent(hierarchy);
 
         frame2->sPosition({ 0, 0, 0, 0 });
         frame2->sSize({ 0,0,50,50 });
+        
+        frame2->UpdateVertexesRenderingOrderInFilteredOrder();
+        frame2->RecalculateActualCords(false);
+        frame2->UpdateVertexesCordsInFilteredOrder(false);
     }*/
 
 
-    wind.GetWindowSize(&width, &height);
-
-    hierarchy->sResolution(width, height);
 
     UpdatePhysicsGrid();
 
@@ -178,7 +251,7 @@ int main() {
     for (unsigned int r = 0; r < circlesAmount; r++) {
         Frame* frame = new Frame;
         frame->sShaderID(shaderID);
-        frame->ApplyVertexTemplate(VertexTemplateEnum::Square);
+        frame->ApplyVertexTemplate(Vertex2DTemplates::Square);
         if (r % 40 == 0)
             frame->SetVertexesParameterByIndex(1, { RandNum(0.f,1.f),RandNum(0.f,1.f),RandNum(0.f,1.f),1.f });
         else
@@ -190,6 +263,9 @@ int main() {
         }
         frame->sSize({ 0,0,circleSize,circleSize });
 
+        frame->RecalculateActualCords(false);
+        frame->UpdateVertexesCordsInFilteredOrder(false);
+
 
         Circles[r] = {
             circleSpeed,circleSpeed,
@@ -199,10 +275,16 @@ int main() {
 
     //std::cout << Time::GetDuration(timeS, Time::GetTimePoint());
 
+    unsigned int framesCounter = 0;
+
+    float lengths[4](0.f, 0.f, 0.f, 0.f);
+
+    float camRot = 0.f;
 
     while (!wind.WindowWaitingToBeClosed()) {
 
-        TimePoint frameStartTime = Time::GetTimePoint();
+
+        float startTime = Time::GetTime();
 
         wind.StartUpdatingWindow();
 
@@ -216,12 +298,16 @@ int main() {
             hierarchy->sResolution(width, height);
 
             UpdatePhysicsGrid();
+
+            translatorTo3D->RecalculateActualCords(false);
+            translatorTo3D->UpdateVertexesCordsInFilteredOrder(false);
+            float topAngle = 90.f/180.f*3.14f;
+            translatorTo3D->sCameraAngle({ 2 * atanf(width / height * 2 * tanf(topAngle / 2)), topAngle });
         }
 
 
 
         for (unsigned int i = 0; i < circlesAmount; i++) {
-
             auto& frame = *Circles[i].frame;
 
             const SPCS& pos = frame.grPosition();
@@ -249,6 +335,7 @@ int main() {
 
             frame.sPosition({ 0,0,px,py });
 
+            
 
             if (not PhysicsGridJustGotUpdated)
                 for (unsigned int di = 0; di < PhysicsGrid[Circles[i].physicsGridInd].size(); di++) {
@@ -261,24 +348,17 @@ int main() {
             Circles[i].physicsGridInd = getPhysicsGridInd(px, py);
             PhysicsGrid[Circles[i].physicsGridInd].push_back(i);
 
+        }
 
-
-
-
-            /*for (unsigned int i2 = 0; i2 < Circles.size(); i2++) {
-                if (i2 == i) continue;
-                float x1 = Circles[i].frame->Position.gPX();
-                float y1 = Circles[i].frame->Position.gPY();
-                float x2 = Circles[i2].frame->Position.gPX();
-                float y2 = Circles[i2].frame->Position.gPY();
-                if (sqrtf((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))<circleSize)
-                    SolveCollision(&Circles[i], &Circles[i2]);
-            }*/
-
+        {
+            float ctime = Time::GetTime();
+            float timeAdd = ctime - startTime;
+            lengths[0] += timeAdd;
+            startTime = ctime;
         }
 
         PhysicsGridJustGotUpdated = false;
-
+        
         {
             unsigned int mainGridInd = 0;
 
@@ -353,13 +433,66 @@ for (unsigned int i1 = 0; i1 < PhysicsGrid[mainGridInd].size(); i1++) {\
 #undef collisionCheckCycle
         }
 
+        {
+            float ctime = Time::GetTime();
+            float timeAdd = ctime - startTime;
+            lengths[1] += timeAdd;
+            startTime = ctime;
+        }
+
+
+        camRot += 1.f;
+        cube->sRotation(Matrix::FromAnglesXYZ(camRot / 180.f * 3.14f, camRot / 180.f * 3.14f, 0.f));
+        //hierarchy->sCameraRotation(3.14f / 180.f * camRot);
+
+        for (unsigned int i = 0; i < circlesAmount; i++) {
+            auto& frame = *Circles[i].frame;
+            frame.RecalculateActualCords(false);
+            frame.UpdateVertexesCordsInFilteredOrder(false);
+        }
+
+        {
+            float ctime = Time::GetTime();
+            float timeAdd = ctime - startTime;
+            lengths[2] += timeAdd;
+            startTime = ctime;
+        }
+
         hierarchy->Render();
 
+        {
+            float ctime = Time::GetTime();
+            float timeAdd = ctime - startTime;
+            lengths[3] += timeAdd;
+            startTime = ctime;
+        }
+        
 
         wind.EndUpdatingWindow();
 
+        framesCounter++;
+        float lensum = lengths[0] + lengths[1] + lengths[2] + lengths[3];
+        if (lensum > 1) {
+            std::cout << framesCounter;
 
-        //std::cout << 1 / Time::GetDuration(frameStartTime, Time::GetTimePoint()) << '\n';
+
+            
+            //move by delta and bound to screen, apply physics, update positions, render
+
+            //on 0: 85.9595%, 10.3213%, 0.206302%, 3.5129%
+            //on 50: 17.4993%, 3.28446%, 49.1153%, 30.1009%
+            //on 100: 13.7268%, 3.15427%, 53.2648%, 29.854%
+            //on 1000: 11.4458%, 5.46018%, 54.0866%, 29.0074%
+            //on 3000: 11.3242%, 8.13164%, 52.7283%, 27.8159%
+
+
+            for (unsigned int i = 0; i < 4; i++) { 
+                std::cout << ", " << lengths[i] / lensum * 100.f << "%";
+                lengths[i] = 0.f; 
+            }
+            std::cout << '\n';
+            framesCounter = 0;
+        }
 
 
     }

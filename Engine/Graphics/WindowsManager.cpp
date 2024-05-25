@@ -60,6 +60,7 @@ Window::Window(int width, int height, const char* name, GLFWmonitor* monitor) {
         return;
     }
 
+    //glSC(glEnable(GL_DEPTH_TEST));
     glSC(glEnable(GL_BLEND));
     glSC(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     glSC(glClearColor(0.f, 0.f, 0.f, 1.f));
@@ -109,6 +110,7 @@ void Window::GetCursorPosition(float* x, float* y) const {
 void Window::StartUpdatingWindow() {
 
     glSC(glClear(GL_COLOR_BUFFER_BIT));
+    glSC(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
     if (UpdateWindowRenderingSizeAutomatically) {
         unsigned int width, height;

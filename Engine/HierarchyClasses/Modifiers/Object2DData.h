@@ -8,13 +8,16 @@
 #include"Graphics/ShaderProgramsManager.h"
 #include"UsefullStuff/ClassEvent.h"
 #include"Renderer.h"
-class TranslatorFrom2D;
-enum VertexTemplateEnum {
-	Square, Triangle
-};
+#include"TranslatorFrom2D.h"
+
 class Object2DData {
 	friend class TranslatorFrom2D;
+	friend class TranslatorFrom3D;
 	ClassesMap* instancePtr = nullptr;//"this" pointer from actual instance
+
+	bool ObjectHasBeenInitialized = false;
+
+	std::vector<unsigned int> InitializedRenderingDataLayout;
 
 	unsigned int RenderingObjectTypeInd;
 
@@ -35,30 +38,33 @@ class Object2DData {
 	unsigned int DependentElementsAmountInFilteredOrder = 1;//including object itself
 
 	
-	std::vector<Renderer::VertexesDataElement> VertexesData;
-	
-	std::vector<Renderer::VertexAditionalDataLayoutElement> VertexAditionalDataLayout;
+	std::vector<TranslatorFrom2D::VertexesDataElement> VertexesData;
+	std::vector<Renderer::DataLayoutElement> VertexesDataLayout;
 	std::vector<unsigned int> VertexesRenderingOrder;
 
 	Event<const Uniform&> UpdateUniformDataEvent;
 
-	void AddVertexAditionalDataLayout(std::string name, ShaderProgramTypeEnum type, unsigned int len);
+public:
+
+	//can be called ONLY before setting object parent and adding vertexes/applying templates
+	DLL_TREATMENT void AddLayoutDataToVertexesDataLayout(std::string name, ShaderProgramDataTypes type, unsigned int len);
 	
-	//calculates positions, and updates vertexes positions in filtered order
-	void UpdateVertexesCordsInFilteredOrder(bool recursive);
+	DLL_TREATMENT void RecalculateActualCords(bool recursive);
 
-	void RecalculateActualCords(bool recursive);
+	DLL_TREATMENT void UpdateVertexesCordsInFilteredOrder(bool recursive);//updates vertexes positions in filtered order
 
-	void UpdateVertexesRenderingOrderInFilteredOrder(bool recursive);
+private:
 
 	float Priority = 0.f;
 
 	ShaderProgramID ShaderID;
-public:
-	DLL_TREATMENT bool ShaderCanBeApplyed(ShaderProgramID id);
-	DLL_TREATMENT void sShaderID(ShaderProgramID id);
+
+
+	
 
 public:
+	DLL_TREATMENT void sShaderID(ShaderProgramID id);
+
 	static const std::type_index TypeIndex;
 	Object2DData* gThis();
 	DLL_TREATMENT Object2DData(ClassesMap* mapPtr);
@@ -67,14 +73,12 @@ public:
 	DLL_TREATMENT const float& grPriority() const;
 	DLL_TREATMENT void sPriority(float newPriority);
 
-	/*you should call "UpdateIndexBuffer" when u finished adding vertexes,
-	also order of vertexes is important for drawing some weird shape objects*/
-	DLL_TREATMENT void AddVertex(const float(&& uhh)[]);
+	/*you should call "ApplyAddedVertexesChanges" when u finished adding vertexes*/
+	DLL_TREATMENT unsigned int AddVertex(const float(&& data)[]);
 
-	//recalculates indexes order for rendering, may be a heavy function if a lot of vetexes
-	DLL_TREATMENT void UpdateVertexesRenderingOrder();
+	DLL_TREATMENT void MakeTriangleOutOfVertexes(unsigned int i1, unsigned int i2, unsigned int i3);
 
-	DLL_TREATMENT void ApplyVertexTemplate(VertexTemplateEnum vertexTemplate);
+	DLL_TREATMENT void ApplyVertexTemplate(Vertex2DTemplates vertexTemplate);
 
 	DLL_TREATMENT void SetVertexesParameterByIndex(unsigned int parameterInd, const float(&& data)[]);
 	DLL_TREATMENT void SetVertexesParameterByName(const std::string&& parameterName, const float(&& data)[]);
@@ -82,8 +86,8 @@ public:
 	DLL_TREATMENT void SetVertexParameterByIndex(unsigned int vertexInd, unsigned int parameterInd, const float(&& data)[]);
 	DLL_TREATMENT void SetVertexParameterByName(unsigned int vertexInd, const std::string&& parameterName, const float(&& data)[]);
 
-	DLL_TREATMENT std::vector<Renderer::VertexesDataElement> gVertexes() const;
-	DLL_TREATMENT const std::vector<Renderer::VertexesDataElement>& grVertexes() const;
+	DLL_TREATMENT std::vector<TranslatorFrom2D::VertexesDataElement> gVertexes() const;
+	DLL_TREATMENT const std::vector<TranslatorFrom2D::VertexesDataElement>& grVertexes() const;
 
 	DLL_TREATMENT std::vector<float> GetVertexParameterByIndex(unsigned int vertexInd, unsigned int parameterInd) const;
 	DLL_TREATMENT std::vector<float> GetVertexParameterByName(unsigned int vertexInd, const std::string&& parameterName) const;
@@ -102,5 +106,8 @@ public:
 	DLL_TREATMENT SPCS gPosition() const;
 	DLL_TREATMENT const float& grRotation() const;
 	DLL_TREATMENT float gRotation() const;
+
+
+	
 
 };

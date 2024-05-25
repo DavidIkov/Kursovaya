@@ -6,10 +6,10 @@
 #include"Uniform.h"
 
 
-enum ShaderProgramTypeEnum {
-	vector2, vector3, vector4, floatType, martix4by4, image2D
+enum ShaderProgramDataTypes {
+	vector2, vector3, vector4, floatType, martix4by4, image2D, integerType
 };
-std::string GetShaderProgramTypeEnumName(ShaderProgramTypeEnum type);
+std::string GetShaderProgramDataTypeName(ShaderProgramDataTypes type);
 
 /*need to make so same if same shader program exists it wont create new same progam!!!!ALSO OPTIMISE COPYING, 
 by making all data as pointers so i can just put pointer to original shader*/
@@ -18,8 +18,13 @@ public:
 	static const unsigned int ShaderVersion = 330;
 
 	struct DataElement {
-		ShaderProgramTypeEnum Type;
+		ShaderProgramDataTypes Type;
 		std::string Name;
+	};
+	struct UniformDataElement {
+		ShaderProgramDataTypes Type;
+		std::string Name;
+		unsigned int MaxArrayCapacity = 0;//if >0 then this is array
 	};
 private:
 	Uniform vUniform;
@@ -30,8 +35,10 @@ public:
 
 	std::vector<DataElement> VertexBufferData;
 	std::vector<DataElement> TransferData;
-	std::vector<DataElement> VertexShaderUniformsData;
-	std::vector<DataElement> FragmentShaderUniformsData;
+
+	std::vector<UniformDataElement> VertexShaderUniformsData;
+	std::vector<UniformDataElement> FragmentShaderUniformsData;
+
 
 	std::vector<std::string> VertexShaderCodeParts;
 	std::vector<std::string> FragmentShaderCodeParts;

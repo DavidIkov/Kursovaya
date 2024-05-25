@@ -30,10 +30,10 @@
     <ClCompile Include="Graphics\VertexArray.cpp" />
     <ClCompile Include="Graphics\VertexBuffer.cpp" />
     <ClCompile Include="Graphics\WindowsManager.cpp" />
+    <ClCompile Include="HierarchyClasses\Classes\DimensionalTranslatorFrom3Dto2D.cpp" />
     <ClCompile Include="HierarchyClasses\Classes\Frame.cpp" />
     <ClCompile Include="HierarchyClasses\Classes\HierarchyRoot.cpp" />
-    <ClCompile Include="HierarchyClasses\Modifiers\Camera2D.cpp" />
-    <ClCompile Include="HierarchyClasses\Modifiers\Camera3D.cpp" />
+    <ClCompile Include="HierarchyClasses\Classes\Object.cpp" />
     <ClCompile Include="HierarchyClasses\Modifiers\Instance.cpp" />
     <ClCompile Include="HierarchyClasses\Modifiers\Object2DData.cpp" />
     <ClCompile Include="HierarchyClasses\Modifiers\Object3DData.cpp" />
@@ -47,6 +47,7 @@
     <ClCompile Include="Maths\Matrix.cpp" />
     <ClCompile Include="Maths\SPCS.cpp" />
     <ClCompile Include="Maths\Vector2.cpp" />
+    <ClCompile Include="Maths\Vector3.cpp" />
     <ClCompile Include="UsefullStuff\RandomNumber.cpp" />
     <ClCompile Include="UsefullStuff\Time.cpp" />
   </ItemGroup>
@@ -64,11 +65,10 @@
     <ClInclude Include="Graphics\VertexArray.h" />
     <ClInclude Include="Graphics\VertexBuffer.h" />
     <ClInclude Include="Graphics\WindowsManager.h" />
-    <ClInclude Include="HierarchyClasses\Classes\DimensionalTranslator2Dto3D.h" />
+    <ClInclude Include="HierarchyClasses\Classes\DimensionalTranslator3Dto2D.h" />
     <ClInclude Include="HierarchyClasses\Classes\Frame.h" />
     <ClInclude Include="HierarchyClasses\Classes\HierarchyRoot.h" />
-    <ClInclude Include="HierarchyClasses\Modifiers\Camera2D.h" />
-    <ClInclude Include="HierarchyClasses\Modifiers\Camera3D.h" />
+    <ClInclude Include="HierarchyClasses\Classes\Object3D.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\ClassesMap.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\Instance.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\Object2DData.h" />
@@ -80,6 +80,7 @@
     <ClInclude Include="Maths\Matrix.h" />
     <ClInclude Include="Maths\SPCS.h" />
     <ClInclude Include="Maths\Vector2.h" />
+    <ClInclude Include="Maths\Vector3.h" />
     <ClInclude Include="UsefullStuff\ClassEvent.h" />
     <ClInclude Include="UsefullStuff\ClearIntervalInVector.h" />
     <ClInclude Include="UsefullStuff\FilterVector.h" />
