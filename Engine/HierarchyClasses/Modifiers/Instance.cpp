@@ -102,5 +102,4 @@ void Instance::ClearAllChildren() {
 	deleteChildren();
 	Children = std::vector<ClassesMap*>();
 }
-const std::vector<ClassesMap*>& Instance::grChildren() const { return Children; }
-std::vector<ClassesMap*> Instance::gChildren() const { return Children; }
+const std::vector<ClassesMap*>& Instance::gChildren() const { return Children; }

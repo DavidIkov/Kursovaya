@@ -22,5 +22,5 @@ void VertexBuffer::Unbind() {
 
 void VertexBuffer::ModifyData(const std::vector<float>* data) {
 	glSC(glBindBuffer(GL_ARRAY_BUFFER, ID));
-	glSC(glBufferData(GL_ARRAY_BUFFER, data->size() * sizeof(float), &((*data)[0]), GL_DYNAMIC_DRAW));
+	glSC(glBufferData(GL_ARRAY_BUFFER, data->size() * sizeof(float), (data->size() > 0)?&((*data)[0]):nullptr, GL_DYNAMIC_DRAW));
 }

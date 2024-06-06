@@ -14,6 +14,10 @@ void Vector2::RotateVectors(const Vector2& xv, const Vector2& yv, float angle, V
 	yvTOWRITE = yv * cosf(angle) - savedXv * sinf(angle);
 }
 
+float Vector2::DotProduct(const Vector2& vec) const {
+	return (vec.X * X + vec.Y * Y) / vec.Length() / Length();
+}
+
 Vector2::Vector2() {
 
 }

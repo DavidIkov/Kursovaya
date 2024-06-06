@@ -8,6 +8,8 @@
 #include"Graphics/ShaderProgramsManager.h"
 #include"UsefullStuff/ClassEvent.h"
 #include"Maths/Vector2.h"
+#include"Graphics/FrameBuffer.h"
+#include"Graphics/ShaderProgram.h"
 
 
 class Renderer {
@@ -17,14 +19,19 @@ class Renderer {
 	friend class Object3DData;
 	ClassesMap* InstancePtr = nullptr;//"this" pointer from actual instance
 
-	struct ObjectsVectorElement {
-		bool DepthTesting = false;//if this is translator then it works
-		std::vector<ObjectsVectorElement>* TranslatorObjectsVector;//if this exists then this member is translator
+	struct RenderingDataElement {
+		FrameBuffer* TranslatorFrameBuffer;//if this exists then this member is translator
+
 		std::vector<float> VertexBufferData;//dummy if element is translator
 		ShaderProgramID ShaderID = (unsigned int)(-1);//dummy if element is translator
 		Event<const Uniform&>* UniformDataUpdateEvent;//dummy if element is translator
+
 		unsigned int RenderingObjectTypeInd;
-		unsigned int* IntContainer;//pointer to data where index of element is located
+
+
+		//data for translators
+		unsigned int* IndexContainer;
+		unsigned int* DependentElementsAmountContainer;
 	};
 	struct DataLayoutElement {
 		std::string Name;
@@ -39,16 +46,20 @@ class Renderer {
 	struct TypesOfRenderingObjects_Element {
 		mutable VertexArray vVertexArray;
 		mutable VertexBuffer vVertexBuffer;
-		//mutable IndexBuffer vIndexBuffer;
 		BufferLayout vBufferLayout;
-		TypesOfRenderingObjects_Element(std::vector<unsigned int>& renderingDataLayout);
+		TypesOfRenderingObjects_Element(const std::vector<unsigned int>& renderingDataLayout);
 
 		bool IsCompatible(std::vector<unsigned int>& renderingDataLayout) const;
 		
 		void Bind(unsigned int shaderID, Event<const Uniform&>* uniformEvent) const;
+		void Bind(const ShaderProgram& shader) const;
+
 		void Unbind() const;
 	};
 	std::vector<TypesOfRenderingObjects_Element> TypesOfRenderingObjects;
+
+	TypesOfRenderingObjects_Element BasicImageRendererType;
+	ShaderProgram BasicImageRenderer;
 
 	unsigned int GetTypeOfRenderingObject(std::vector<unsigned int>& renderingDataLayout);
 	
@@ -60,6 +71,6 @@ public:
 
 	DLL_TREATMENT void Render() const;
 private:
-	void Render(std::vector<ObjectsVectorElement>* fitleredOrder) const;
+	void Render(const std::vector<RenderingDataElement>& renderingData, const FrameBuffer& bufferToWrite) const;
 public:
 };

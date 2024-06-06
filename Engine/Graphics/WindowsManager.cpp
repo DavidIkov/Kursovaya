@@ -20,26 +20,36 @@ bool WindowsManager::Initialize() {
 
     return true;
 }
-GLFWmonitor* WindowsManager::getCurrentMonitor() {
+GLFWmonitor* WindowsManager::gCurrentMonitor() {
     return glfwGetPrimaryMonitor();
 }
-const GLFWvidmode* WindowsManager::getMonitorData(GLFWmonitor* monitor) {
+const GLFWvidmode* WindowsManager::gMonitorData(GLFWmonitor* monitor) {
     return glfwGetVideoMode(monitor);
 }
 void WindowsManager::Uninitialize() {
     glfwTerminate();
 }
 
-//temp
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_E && action == GLFW_PRESS)
-        std::cout << "pressed e??\n";
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    for (unsigned int i = 0; i < WindowsManager::Windows.size(); i++)
+        if (WindowsManager::Windows[i]->gWindowPtr() == window) WindowsManager::Windows[i]->Keyboard.KeyCallback(key, scancode, action, mods);
 }
 
+
+GLFWwindow* Window::gWindowPtr() const {
+    return WindowPtr;
+}
+Window::~Window() {
+    for (unsigned int i = 0; i < WindowsManager::Windows.size(); i++)
+        if (WindowsManager::Windows[i]->WindowPtr == WindowPtr) {
+            WindowsManager::Windows.erase(WindowsManager::Windows.begin() + i);
+            return;
+        }
+}
 Window::Window(int width, int height, const char* name, GLFWmonitor* monitor) {
 
-    Hierarchy = new HierarchyRoot(this);
+    WindowsManager::Windows.push_back(this);
+
 
     GLFWwindow* window = glfwCreateWindow(width, height, name, monitor, NULL);
     if (!window)
@@ -53,14 +63,15 @@ Window::Window(int width, int height, const char* name, GLFWmonitor* monitor) {
 
     glfwMakeContextCurrent(window);
 
-    glfwSetKeyCallback(WindowPtr, key_callback);
+    glfwSetKeyCallback(WindowPtr, KeyCallback);
 
     if (glewInit() != GLEW_OK) {
         __debugbreak();//glew failed for some reason
         return;
     }
 
-    //glSC(glEnable(GL_DEPTH_TEST));
+    Hierarchy = new HierarchyRoot(this, (unsigned int)width, (unsigned int)height);
+
     glSC(glEnable(GL_BLEND));
     glSC(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     glSC(glClearColor(0.f, 0.f, 0.f, 1.f));
@@ -68,7 +79,7 @@ Window::Window(int width, int height, const char* name, GLFWmonitor* monitor) {
     glSC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));//GL_MIRRORED_REPEAT
     glSC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));//GL_MIRRORED_REPEAT
 
-    glSC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));//when downscaling
+    glSC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));//when downscaling
     glSC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));//when upscaling
 }
 void Window::SetWindowSize(unsigned int width, unsigned int height) {
@@ -97,19 +108,43 @@ void Window::GetWindowSize(unsigned int* width, unsigned  int* height) const {
 void Window::UpdateWindowRenderingSize(unsigned int width, unsigned int height) {
     glSC(glViewport(0, 0, width, height));
 }
-void Window::GetCursorPosition(float* x, float* y) const {
-    unsigned int width, height;
-    GetWindowSize(&width, &height);
+void Window::SetCursorMode(CursorModes mode) {
+    unsigned int glfwMode = GLFW_CURSOR_NORMAL;
+    switch (mode) {
+    case CursorModes::Free: glfwMode = GLFW_CURSOR_NORMAL; break;
+    case CursorModes::LockedAndInvisible: glfwMode = GLFW_CURSOR_DISABLED; break;
+    }
+    glfwSetInputMode(WindowPtr, GLFW_CURSOR, glfwMode);
+}
+void Window::GetCursorMotionData(Vector2* pos, Vector2* delta) const {
+    if (not MouseMotionAquirementHappenedInThisFrame) {
+        unsigned int width, height;
+        GetWindowSize(&width, &height);
 
-    double tx, ty;
-    glfwGetCursorPos(WindowPtr, &tx, &ty);
+        double tx, ty;
+        glfwGetCursorPos(WindowPtr, &tx, &ty);
 
-    (*x) = (float)tx - (float)width / 2;
-    (*y) = (float)height / 2 - (float)ty;
+        Vector2 recordedPrevPos = LastMousePosition;
+
+        LastMousePosition.sX((float)tx - (float)width / 2);
+        LastMousePosition.sY((float)height / 2 - (float)ty);
+
+        LastMouseDelta.sX(LastMousePosition.gX() - recordedPrevPos.gX());
+        LastMouseDelta.sY(LastMousePosition.gY() - recordedPrevPos.gY());
+    }
+
+    if (pos!=nullptr)
+        *pos = LastMousePosition;
+    if (delta!=nullptr)
+        *delta = LastMouseDelta;
+
+    MouseMotionAquirementHappenedInThisFrame = true;
 }
 void Window::StartUpdatingWindow() {
 
-    glSC(glClear(GL_COLOR_BUFFER_BIT));
+    GetCursorMotionData(nullptr,nullptr);//just updates it
+
+    //glSC(glClear(GL_COLOR_BUFFER_BIT));
     glSC(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
     if (UpdateWindowRenderingSizeAutomatically) {
@@ -121,4 +156,5 @@ void Window::StartUpdatingWindow() {
 void Window::EndUpdatingWindow() {
     glfwSwapBuffers(WindowPtr);
     glfwPollEvents();
+    MouseMotionAquirementHappenedInThisFrame = false;
 }

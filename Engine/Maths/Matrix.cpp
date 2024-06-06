@@ -20,11 +20,7 @@ float Matrix::gDeterminant() const {
 	if (NeedToUpdateDeterminant) UpdateDeterminant();
 	return Determinant;
 }
-Matrix Matrix::gReversedMatrix() const {
-	if (NeedToUpdateReversedMatrix) UpdateReversedMatrix();
-	return *ReversedMatrix;
-}
-const Matrix& Matrix::grReversedMatrix() const {
+const Matrix& Matrix::gReversedMatrix() const {
 	if (NeedToUpdateReversedMatrix) UpdateReversedMatrix();
 	return *ReversedMatrix;
 }

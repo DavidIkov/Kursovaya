@@ -31,6 +31,8 @@ public:
 	DLL_TREATMENT float Length() const;
 	DLL_TREATMENT Vector3 Unit() const;
 
+	DLL_TREATMENT Vector3 Cross(const Vector3& vec) const;
+
 	DLL_TREATMENT void sX(float nX);
 	DLL_TREATMENT float gX() const;
 	DLL_TREATMENT void sY(float nY);

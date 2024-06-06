@@ -28,7 +28,10 @@
     <ClCompile Include="Maths\Vector2.cpp" />
     <ClCompile Include="Maths\Vector3.cpp" />
     <ClCompile Include="HierarchyClasses\Classes\DimensionalTranslatorFrom3Dto2D.cpp" />
-    <ClCompile Include="HierarchyClasses\Classes\Object.cpp" />
+    <ClCompile Include="HierarchyClasses\Classes\Object3D.cpp" />
+    <ClCompile Include="Graphics\InputController.cpp" />
+    <ClCompile Include="Graphics\FrameBuffer.cpp" />
+    <ClCompile Include="HierarchyClasses\Modifiers\OffScreenRenderingData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UsefullStuff\ClassEvent.h" />
@@ -71,6 +74,9 @@
     <ClInclude Include="Maths\Vector2.h" />
     <ClInclude Include="Maths\Vector3.h" />
     <ClInclude Include="HierarchyClasses\Classes\Object3D.h" />
+    <ClInclude Include="Graphics\InputController.h" />
+    <ClInclude Include="Graphics\FrameBuffer.h" />
+    <ClInclude Include="HierarchyClasses\Modifiers\OffScreenRenderingData.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="HierarchyClasses\Modifiers\TEMPLATE.template" />

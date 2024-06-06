@@ -88,6 +88,10 @@ Vector3 Vector3::Unit() const {
 	return Vector3(UnitX, UnitY, UnitZ);
 }
 
+Vector3 Vector3::Cross(const Vector3& vec) const {
+	return Vector3(Y * vec.Z - vec.Y * Z, Z * vec.X - vec.Z * X, X * vec.Y - vec.X * Y);
+}
+
 void Vector3::sX(float nX) {
 	X = nX;
 	newUnit = true;

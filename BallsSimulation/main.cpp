@@ -65,8 +65,8 @@ void SolveCollision(unsigned int c1i, unsigned int c2i) {
     Circle& c1 = Circles[c1i];
     Circle& c2 = Circles[c2i];
 
-    Vector2 p1(c1.frame->grPosition().gPX(), c1.frame->grPosition().gPY());
-    Vector2 p2(c2.frame->grPosition().gPX(), c2.frame->grPosition().gPY());
+    Vector2 p1(c1.frame->gPosition().gPX(), c1.frame->gPosition().gPY());
+    Vector2 p2(c2.frame->gPosition().gPX(), c2.frame->gPosition().gPY());
 
     //we dont want to divide by zero and get NAN
     if ((p1 - p2).SqLength() < 0.01) return;
@@ -90,16 +90,19 @@ void SolveCollision(unsigned int c1i, unsigned int c2i) {
 
 
 int main() {
-
     WindowsManager::Initialize();
 
-    auto monitorData = WindowsManager::getMonitorData(WindowsManager::getCurrentMonitor());
+    auto monitorData = WindowsManager::gMonitorData(WindowsManager::gCurrentMonitor());
 
     Window wind(monitorData->width / 2, monitorData->height / 2, "david window");
+
+    auto& keyboard = wind.Keyboard;
 
 
     wind.SetWindowColor(1.f, 0.5f, 0.f);
     wind.SetSwapInterval(1);
+
+    wind.SetCursorMode(CursorModes::Free);
 
     ShaderProgram shader;
     ShaderProgramID shaderID = ShaderProgramsManager::AddShaderProgram("Circle", &shader);
@@ -121,7 +124,9 @@ int main() {
 
     ShaderProgram shader3d;
     ShaderProgramID shader3dID = ShaderProgramsManager::AddShaderProgram("3d shader", &shader3d);
-    shader3d.VertexBufferData.push_back({ ShaderProgramDataTypes::vector3,"SpacePosition" });
+
+    shader3d.VertexBufferData.push_back({ ShaderProgramDataTypes::vector4,"PositionOnWindow" });
+    shader3d.VertexBufferData.push_back({ ShaderProgramDataTypes::vector3,"PositionInSpace" });
     shader3d.VertexBufferData.push_back({ ShaderProgramDataTypes::vector3,"LocalPosition" });
     shader3d.VertexBufferData.push_back({ ShaderProgramDataTypes::vector4,"Color" });
     shader3d.VertexBufferData.push_back({ ShaderProgramDataTypes::vector3,"SpaceNormal" });
@@ -129,116 +134,85 @@ int main() {
 
     shader3d.TransferData.push_back({ ShaderProgramDataTypes::vector4 ,"VertexColor" });
     shader3d.TransferData.push_back({ ShaderProgramDataTypes::vector3,"LocalPosition" });
-    shader3d.TransferData.push_back({ ShaderProgramDataTypes::vector3,"SpacePosition" });
+    shader3d.TransferData.push_back({ ShaderProgramDataTypes::vector3,"PositionInSpace" });
     shader3d.TransferData.push_back({ ShaderProgramDataTypes::vector3,"SpaceNormal" });
 
-    shader3d.VertexShaderCodeParts.push_back("t_VertexColor=i_Color;\ngl_Position = vec4(i_SpacePosition.x, i_SpacePosition.y, i_SpacePosition.z, 1.f);");
-    shader3d.VertexShaderCodeParts.push_back("t_SpacePosition=gl_Position.xyz; t_SpaceNormal=i_SpaceNormal;");
+    shader3d.VertexShaderCodeParts.push_back("t_VertexColor=i_Color;\ngl_Position = i_PositionOnWindow;");
+    shader3d.VertexShaderCodeParts.push_back("t_PositionInSpace=i_PositionInSpace; t_SpaceNormal=i_SpaceNormal;");
     shader3d.FragmentShaderCodeParts.push_back("float brightness = -1;");
-    shader3d.FragmentShaderCodeParts.push_back("for (int i=0;i<u_LightSourcesAmount;i++) brightness=max(brightness,dot(t_SpaceNormal,ua_LightSources[i]-t_SpacePosition));");
+    shader3d.FragmentShaderCodeParts.push_back("for (int i=0;i<u_LightSourcesAmount;i++) brightness=max(brightness,dot(t_SpaceNormal,normalize(ua_LightSources[i]-t_PositionInSpace)));");
     shader3d.FragmentShaderCodeParts.push_back("o_PixelColor=vec4(t_VertexColor.xyz*(brightness+1)/2,t_VertexColor.w);");
-
-    //shader3d.FragmentShaderCodeParts.push_back("o_PixelColor=vec4(dot(t_SpaceNormal,pos-t_SpacePosition)*t_VertexColor.xyz*u_LightSourcesAmount,1.f);");
-
+    
+    shader3d.VertexShaderCodeParts.push_back("t_LocalPosition=i_LocalPosition;");
+    
     shader3d.FragmentShaderUniformsData.push_back({ ShaderProgramDataTypes::vector3, "LightSources", 32 });
     shader3d.FragmentShaderUniformsData.push_back({ ShaderProgramDataTypes::integerType, "LightSourcesAmount" });
 
 
-    shader3d.VertexShaderCodeParts.push_back("t_LocalPosition=i_LocalPosition;");
-
     shader3d.CompileShader();
-
+    
     shader3d.gUniform().SetUniform1i("u_LightSourcesAmount", 1);
-    shader3d.gUniform().SetUniform3fv("ua_LightSources", { 0,0,0 });
+    shader3d.gUniform().SetUniform3fv("ua_LightSources", { 30,0,0 });
    
 
     HierarchyRoot* hierarchy = wind.Hierarchy;
+    //hierarchy->sCameraSize({ 2,2,0,0 });
+    //hierarchy->sCameraPosition({ 0,0,0,0 });
 
-    //hierarchy->sCameraSize({ 3,3,0,0 });
-    //hierarchy->sCameraPosition({ -1,0,0,0 });
 
     
 
-    
 
 
 
-
-    hierarchy->AutomaticallyUpdateVertexesCordsInFilteredOrder = false;
-    hierarchy->AutomaticallyRecalculateActualCords = false;
-
-
-    /* Frame* frame = new Frame;
-
-     frame->sShaderID(shader2ID);
-
-     frame->AddVertex({ -0.3f,1.f, 0.f,0.f,0.f,0.f });
-     frame->AddVertex({ 0.3f,1.f, 0.8f,0.1f,0.2f,1.f });
-     frame->AddVertex({ 1.f,-1.f, 0.5f,0.1f,0.f,0.f });
-     frame->AddVertex({ -1.f,-1.f, 1.f,0.9f,0.9f,1.f });
-     frame->UpdateIndexBuffer();
-     frame->sParent(&windProgram);
-     frame->sPriority(3.f);
-     frame->Size.sPX(100.f);
-     frame->Size.sPY(100.f);
-     frame->RotationOffset.sSX(-1.f);
-     frame->RotationOffset.sSY(-1.f);
+    hierarchy->UpdateRenderingDataOfChild_OnChildCoordinatesUpdate = false;
+    hierarchy->RecalculateCoordinatesOfChildInSpace_OnChildCoordinatesUpdate = false;
 
 
-     Frame* frame2 = new Frame;
-     frame2->sShaderID(shaderID);
-     frame2->ApplyVertexTemplate(VertexTemplateEnum::Square);
-     frame2->SetVertexesParameterByIndex(2, { 0.5f,0.1f,0.7f,0.5f });
-     frame2->sParent(frame);
-
-     frame2->sPriority(2.f);
-     frame2->Position.sSX(1.f);
-     frame2->Position.sSY(1.f);
-     frame2->Size.sSX(1.f);*/
 
 
     wind.GetWindowSize(&width, &height);
 
-    hierarchy->sResolution(width, height);
-
-    DimensionalTranslator3Dto2D* translatorTo3D = new DimensionalTranslator3Dto2D;
+    DimensionalTranslator3Dto2D* translatorTo3D = new DimensionalTranslator3Dto2D(width,height);
     translatorTo3D->sSize({ 1,1,0,0 });
     translatorTo3D->sParent(hierarchy);
-    translatorTo3D->RecalculateActualCords(false);
+    translatorTo3D->RecalculateCoordinatesInSpace(false);
+    {
 
+        float topAngle = 90.f / 180.f * 3.14f;
+        translatorTo3D->sCameraViewAngle({ 2 * atanf(width / height * 2 * tanf(topAngle / 2)), topAngle });
+    }
 
+    {
+        Object3D* cube = new Object3D;
+        cube->ApplyVertexTemplate(Vertex3DTemplates::Cube, { 1 });
+        cube->sPositionFromParent({ 30,0,4 });
+        cube->sSize({ 1,1,1 });
+        cube->sShaderID(shader3dID);
+        cube->sParent(translatorTo3D);
+        for (unsigned int i = 0; i < 8; i++) {
+            cube->SetVertexParameterByIndex(i, 1, { RandNum(0,1),RandNum(0,1),RandNum(0,1),1.f });
+        }
+    }
+    {
+        Object3D* sphere = new Object3D;
+        sphere->ApplyVertexTemplate(Vertex3DTemplates::Sphere, { 1,10,10 });
+        sphere->sPositionFromParent({ -5,0,4 });
+        sphere->sSize({ 1,1,1 });
+        sphere->sShaderID(shader3dID);
+        sphere->sParent(translatorTo3D);
+    }
 
     Object3D* cube = new Object3D;
     cube->ApplyVertexTemplate(Vertex3DTemplates::Cube, { 1 });
-    cube->sPosition({ 0,0,4 });
-    cube->sSize({ 1,1,2 });
-    //cube->sRotation(Matrix::FromAnglesXYZ(0.f, 40.f / 180.f * 3.14f, 0.f));
+    cube->sPositionFromParent({ 0,0,10 });
+    cube->sSize({ 2,2,4 });
     cube->sShaderID(shader3dID);
     cube->sParent(translatorTo3D);
     for (unsigned int i = 0; i < 8; i++) {
         cube->SetVertexParameterByIndex(i, 1, { RandNum(0,1),RandNum(0,1),RandNum(0,1),1.f });
     }
 
-   /* cube->UpdateVertexesRenderingOrderInFilteredOrder();
-    cube->RecalculateActualCords(false);
-    cube->UpdateVertexesCordsInFilteredOrder(false);*/
-
-    /*{
-        Frame* frame2 = new Frame;
-        frame2->sShaderID(shaderID);
-        frame2->ApplyVertexTemplate(Vertex2DTemplates::Square);
-        frame2->SetVertexesParameterByIndex(2, { 0.5f,0.1f,0.7f,1.f });
-        frame2->sPriority(2.f);
-        
-        frame2->sParent(hierarchy);
-
-        frame2->sPosition({ 0, 0, 0, 0 });
-        frame2->sSize({ 0,0,50,50 });
-        
-        frame2->UpdateVertexesRenderingOrderInFilteredOrder();
-        frame2->RecalculateActualCords(false);
-        frame2->UpdateVertexesCordsInFilteredOrder(false);
-    }*/
 
 
 
@@ -263,8 +237,8 @@ int main() {
         }
         frame->sSize({ 0,0,circleSize,circleSize });
 
-        frame->RecalculateActualCords(false);
-        frame->UpdateVertexesCordsInFilteredOrder(false);
+        frame->RecalculateCoordinatesInSpace(false);
+        frame->UpdateVertexesDataInRenderingData(false);
 
 
         Circles[r] = {
@@ -283,26 +257,71 @@ int main() {
 
     while (!wind.WindowWaitingToBeClosed()) {
 
-
-        float startTime = Time::GetTime();
-
         wind.StartUpdatingWindow();
+
+        Vector2 MousePosition;
+        Vector2 MouseDelta;
+        wind.GetCursorMotionData(&MousePosition, &MouseDelta);
+
 
         unsigned int prevWidth = width;
         unsigned int prevHeight = height;
 
         wind.GetWindowSize(&width, &height);
 
+        if (keyboard.gPressableKeyState(PressableKeys::W)) {
+            translatorTo3D->sCameraPosition(translatorTo3D->gCameraPosition() + translatorTo3D->gCameraRotation() * Vector3(0, 0, 0.05f));
+        }
+        if (keyboard.gPressableKeyState(PressableKeys::A)) {
+            translatorTo3D->sCameraPosition(translatorTo3D->gCameraPosition() + translatorTo3D->gCameraRotation() * Vector3(-0.05f,0,0));
+        }
+        if (keyboard.gPressableKeyState(PressableKeys::S)) {
+            translatorTo3D->sCameraPosition(translatorTo3D->gCameraPosition() + translatorTo3D->gCameraRotation() * Vector3(0, 0, -0.05f));
+        }
+        if (keyboard.gPressableKeyState(PressableKeys::D)) {
+            translatorTo3D->sCameraPosition(translatorTo3D->gCameraPosition() + translatorTo3D->gCameraRotation() * Vector3(0.05f, 0, 0));
+        }
+        if (keyboard.gPressableKeyState(PressableKeys::Q)) {
+            translatorTo3D->sCameraPosition(translatorTo3D->gCameraPosition() + translatorTo3D->gCameraRotation() * Vector3(0, -0.05f, 0));
+        }
+        if (keyboard.gPressableKeyState(PressableKeys::E)) {
+            translatorTo3D->sCameraPosition(translatorTo3D->gCameraPosition() + translatorTo3D->gCameraRotation() * Vector3(0, 0.05f, 0));
+        }
+
+        if (keyboard.gPressableKeyState(PressableKeys::O)) {
+            wind.SetCursorMode(CursorModes::LockedAndInvisible);
+        }
+        if (keyboard.gPressableKeyState(PressableKeys::L)) {
+            wind.SetCursorMode(CursorModes::Free);
+        }
+        
+        {//camera rotation
+            Vector2 rotationAngle = Vector2(MouseDelta.gY() / width * 10, -MouseDelta.gX() / width * 10) / 180.f * 3.14f;
+            Matrix resultRotation = translatorTo3D->gCameraRotation() * Matrix::FromAnglesXYZ(rotationAngle.gX(), 0, 0);
+            Vector3 xv(1, 0, 0);
+            Vector3 zv(0, 0, 1);
+            Vector3::RotateVectors(xv, zv, rotationAngle.gY(), xv, zv);
+            resultRotation = Matrix(3, 3, { xv.gX(),xv.gY(),xv.gZ(),0,1,0,zv.gX(),zv.gY(),zv.gZ() }) * resultRotation;
+            translatorTo3D->sCameraRotation(resultRotation);
+        }
+   
+
+
+        
+        float startTime = Time::GetTime();
+        
+
+
         if (prevWidth != width or prevHeight != height) {
 
-            hierarchy->sResolution(width, height);
+            //hierarchy->sResolution(width, height);
 
             UpdatePhysicsGrid();
 
-            translatorTo3D->RecalculateActualCords(false);
+            /*translatorTo3D->RecalculateActualCords(false);
             translatorTo3D->UpdateVertexesCordsInFilteredOrder(false);
             float topAngle = 90.f/180.f*3.14f;
-            translatorTo3D->sCameraAngle({ 2 * atanf(width / height * 2 * tanf(topAngle / 2)), topAngle });
+            translatorTo3D->sCameraAngle({ 2 * atanf(width / height * 2 * tanf(topAngle / 2)), topAngle });*/
         }
 
 
@@ -310,7 +329,7 @@ int main() {
         for (unsigned int i = 0; i < circlesAmount; i++) {
             auto& frame = *Circles[i].frame;
 
-            const SPCS& pos = frame.grPosition();
+            const SPCS& pos = frame.gPosition();
 
             frame.sPosition({ 0,0,pos.gPX() + Circles[i].dx ,pos.gPY() + Circles[i].dy});
 
@@ -365,8 +384,8 @@ int main() {
 #define collisionCheckCycle(oInd) {unsigned int cInd=oInd;\
 for (unsigned int i1 = 0; i1 < PhysicsGrid[mainGridInd].size(); i1++) {\
     for (unsigned int i2 = 0; i2 < PhysicsGrid[oInd].size(); i2++) {\
-        const Vector2& p1 = Circles[PhysicsGrid[mainGridInd][i1]].frame->grPosition().gPV();\
-        const Vector2& p2 = Circles[PhysicsGrid[oInd][i2]].frame->grPosition().gPV();\
+        const Vector2& p1 = Circles[PhysicsGrid[mainGridInd][i1]].frame->gPosition().gPV();\
+        const Vector2& p2 = Circles[PhysicsGrid[oInd][i2]].frame->gPosition().gPV();\
         if ((p1 - p2).SqLength() < circleSize * circleSize)\
             SolveCollision(PhysicsGrid[mainGridInd][i1], PhysicsGrid[oInd][i2]);\
     }\
@@ -442,13 +461,13 @@ for (unsigned int i1 = 0; i1 < PhysicsGrid[mainGridInd].size(); i1++) {\
 
 
         camRot += 1.f;
-        cube->sRotation(Matrix::FromAnglesXYZ(camRot / 180.f * 3.14f, camRot / 180.f * 3.14f, 0.f));
+        cube->sRotationFromParent(Matrix::FromAnglesXYZ(camRot / 180.f * 3.14f, camRot / 180.f * 3.14f, 0.f));
         //hierarchy->sCameraRotation(3.14f / 180.f * camRot);
 
         for (unsigned int i = 0; i < circlesAmount; i++) {
             auto& frame = *Circles[i].frame;
-            frame.RecalculateActualCords(false);
-            frame.UpdateVertexesCordsInFilteredOrder(false);
+            frame.RecalculateCoordinatesInSpace(false);
+            frame.UpdateVertexesDataInRenderingData(false);
         }
 
         {
@@ -457,6 +476,10 @@ for (unsigned int i1 = 0; i1 < PhysicsGrid[mainGridInd].size(); i1++) {\
             lengths[2] += timeAdd;
             startTime = ctime;
         }
+
+        translatorTo3D->RenderInVirtualSpace();
+        hierarchy->RenderInVirtualSpace();
+
 
         hierarchy->Render();
 

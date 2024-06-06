@@ -10,10 +10,8 @@ public:
 	DLL_TREATMENT SPCS();
 	DLL_TREATMENT SPCS(float nsX, float nsY, float npX, float npY);
 
-	DLL_TREATMENT Vector2 gSV() const;
-	DLL_TREATMENT const Vector2& grSV() const;
-	DLL_TREATMENT Vector2 gPV() const;
-	DLL_TREATMENT const Vector2& grPV() const;
+	DLL_TREATMENT const Vector2& gSV() const;
+	DLL_TREATMENT const Vector2& gPV() const;
 
 	DLL_TREATMENT void sSX(float nsX);
 	DLL_TREATMENT void sSY(float nsY);
@@ -24,4 +22,7 @@ public:
 	DLL_TREATMENT float gSY() const;
 	DLL_TREATMENT float gPX() const;
 	DLL_TREATMENT float gPY() const;
+
+	DLL_TREATMENT SPCS operator+(const SPCS& cords) const;
+	DLL_TREATMENT SPCS operator-(const SPCS& cords) const;
 };

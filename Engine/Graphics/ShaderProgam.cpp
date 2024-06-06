@@ -25,7 +25,7 @@ bool ShaderProgram::gCompiled() const {
 	return Compiled;
 }
 
-void ShaderProgram::Bind() {
+void ShaderProgram::Bind() const {
 	glSC(glUseProgram(ID));
 }
 void ShaderProgram::Unbind() {

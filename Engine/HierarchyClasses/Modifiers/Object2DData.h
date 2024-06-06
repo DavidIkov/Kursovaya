@@ -21,37 +21,44 @@ class Object2DData {
 
 	unsigned int RenderingObjectTypeInd;
 
-	SPCS Size = SPCS(0, 0, 10, 10);
-	SPCS Position = SPCS(0, 0, 0, 0);
-	float Rotation = 0.f;
+	SPCS SizeFromParent = SPCS(0, 0, 10, 10);
+	SPCS PositionFromParent = SPCS(0, 0, 0, 0);
+	float RotationFromParent = 0.f;
 
-	Vector2 ActualSize = Vector2(0, 0);//in pixels
-	Vector2 ActualPosition = Vector2(0, 0);//in pixels
-	Matrix RotationMatrix = Matrix(2, 2, { 1,0,0,1 });
+	Vector2 SizeInSpace = Vector2(0, 0);//in pixels
+	Vector2 PositionInSpace = Vector2(0, 0);//in pixels
+	Matrix RotationInSpace = Matrix(2, 2, { 1,0,0,1 });
 
 	TranslatorFrom2D* Translator = nullptr;
 	Renderer* RenderingParent = nullptr;
 
-	unsigned int TranslatorFilteredOrderInd;
+	unsigned int TranslatorObjectsIndex;
 
-	void AddTo_DependentElementsAmount_ToParent(int add);
-	unsigned int DependentElementsAmountInFilteredOrder = 1;//including object itself
+	void AddTo_DependentObjectsAmount_ToParent(int add);
+	unsigned int DependentObjectsAmount_InObjectsVector = 1;//including object itself
 
 	
-	std::vector<TranslatorFrom2D::VertexesDataElement> VertexesData;
-	std::vector<Renderer::DataLayoutElement> VertexesDataLayout;
+	std::vector<std::vector<float>> VertexesData;
+
+	std::vector<Renderer::DataLayoutElement> VertexesNonTemporaryData_Layout;
+	std::vector<Renderer::DataLayoutElement> VertexesTemporaryData_Layout;
+
 	std::vector<unsigned int> VertexesRenderingOrder;
 
 	Event<const Uniform&> UpdateUniformDataEvent;
 
+
 public:
 
 	//can be called ONLY before setting object parent and adding vertexes/applying templates
-	DLL_TREATMENT void AddLayoutDataToVertexesDataLayout(std::string name, ShaderProgramDataTypes type, unsigned int len);
+	DLL_TREATMENT void AddLayoutDataToVertexesNonTemporaryData_Layout(std::string name, ShaderProgramDataTypes type, unsigned int len);
+private:
+	void AddLayoutDataToVertexesTemporaryData_Layout(ShaderProgramDataTypes type, unsigned int len);
+public:
 	
-	DLL_TREATMENT void RecalculateActualCords(bool recursive);
+	DLL_TREATMENT void RecalculateCoordinatesInSpace(bool recursive);
 
-	DLL_TREATMENT void UpdateVertexesCordsInFilteredOrder(bool recursive);//updates vertexes positions in filtered order
+	DLL_TREATMENT void UpdateVertexesDataInRenderingData(bool recursive);
 
 private:
 
@@ -70,10 +77,8 @@ public:
 	DLL_TREATMENT Object2DData(ClassesMap* mapPtr);
 
 	DLL_TREATMENT float gPriority() const;
-	DLL_TREATMENT const float& grPriority() const;
 	DLL_TREATMENT void sPriority(float newPriority);
 
-	/*you should call "ApplyAddedVertexesChanges" when u finished adding vertexes*/
 	DLL_TREATMENT unsigned int AddVertex(const float(&& data)[]);
 
 	DLL_TREATMENT void MakeTriangleOutOfVertexes(unsigned int i1, unsigned int i2, unsigned int i3);
@@ -86,8 +91,6 @@ public:
 	DLL_TREATMENT void SetVertexParameterByIndex(unsigned int vertexInd, unsigned int parameterInd, const float(&& data)[]);
 	DLL_TREATMENT void SetVertexParameterByName(unsigned int vertexInd, const std::string&& parameterName, const float(&& data)[]);
 
-	DLL_TREATMENT std::vector<TranslatorFrom2D::VertexesDataElement> gVertexes() const;
-	DLL_TREATMENT const std::vector<TranslatorFrom2D::VertexesDataElement>& grVertexes() const;
 
 	DLL_TREATMENT std::vector<float> GetVertexParameterByIndex(unsigned int vertexInd, unsigned int parameterInd) const;
 	DLL_TREATMENT std::vector<float> GetVertexParameterByName(unsigned int vertexInd, const std::string&& parameterName) const;
@@ -100,11 +103,8 @@ public:
 	DLL_TREATMENT void sPosition(const SPCS&& nPos);
 	DLL_TREATMENT void sRotation(float nRot);
 	
-	DLL_TREATMENT const SPCS& grSize() const;
-	DLL_TREATMENT SPCS gSize() const;
-	DLL_TREATMENT const SPCS& grPosition() const;
-	DLL_TREATMENT SPCS gPosition() const;
-	DLL_TREATMENT const float& grRotation() const;
+	DLL_TREATMENT const SPCS& gSize() const;
+	DLL_TREATMENT const SPCS& gPosition() const;
 	DLL_TREATMENT float gRotation() const;
 
 

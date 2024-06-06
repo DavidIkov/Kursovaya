@@ -6,7 +6,7 @@
 #include"Uniform.h"
 
 
-enum ShaderProgramDataTypes {
+enum class ShaderProgramDataTypes {
 	vector2, vector3, vector4, floatType, martix4by4, image2D, integerType
 };
 std::string GetShaderProgramDataTypeName(ShaderProgramDataTypes type);
@@ -32,7 +32,6 @@ private:
 	bool Compiled = false;
 public:
 
-
 	std::vector<DataElement> VertexBufferData;
 	std::vector<DataElement> TransferData;
 
@@ -47,10 +46,11 @@ public:
 
 	DLL_TREATMENT bool gCompiled() const;
 
-	DLL_TREATMENT void Bind();
+	DLL_TREATMENT void Bind() const;
 	DLL_TREATMENT static void Unbind();
 
 	DLL_TREATMENT void DeleteShader();
+
 	//after shader is compiled, you CANT change how shader will threat data it gets fed or any of its code becouse its already compiled and cant be changed
 	DLL_TREATMENT void CompileShader();
 };

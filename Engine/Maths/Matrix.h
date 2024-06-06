@@ -37,8 +37,7 @@ public:
 	DLL_TREATMENT ~Matrix();
 
 	DLL_TREATMENT float gDeterminant() const;
-	DLL_TREATMENT Matrix gReversedMatrix() const;
-	DLL_TREATMENT const Matrix& grReversedMatrix() const;
+	DLL_TREATMENT const Matrix& gReversedMatrix() const;
 
 	DLL_TREATMENT bool IsIndInMatrix(unsigned int i) const;
 	DLL_TREATMENT unsigned int GetIndByXY(unsigned int x, unsigned int y) const;

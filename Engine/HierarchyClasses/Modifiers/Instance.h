@@ -65,6 +65,5 @@ public:
 	DLL_TREATMENT ClassesMap* gParent() const;
 
 	DLL_TREATMENT void ClearAllChildren();
-	DLL_TREATMENT const std::vector<ClassesMap*>& grChildren() const;
-	DLL_TREATMENT std::vector<ClassesMap*> gChildren() const;
+	DLL_TREATMENT const std::vector<ClassesMap*>& gChildren() const;
 };

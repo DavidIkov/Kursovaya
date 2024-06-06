@@ -21,7 +21,9 @@
   <ItemGroup>
     <ClCompile Include="Dependencies\stb_image\stb_image.cpp" />
     <ClCompile Include="Graphics\BufferLayout.cpp" />
+    <ClCompile Include="Graphics\FrameBuffer.cpp" />
     <ClCompile Include="Graphics\IndexBuffer.cpp" />
+    <ClCompile Include="Graphics\InputController.cpp" />
     <ClCompile Include="Graphics\Shader.cpp" />
     <ClCompile Include="Graphics\ShaderProgam.cpp" />
     <ClCompile Include="Graphics\ShaderProgramsManager.cpp" />
@@ -33,10 +35,11 @@
     <ClCompile Include="HierarchyClasses\Classes\DimensionalTranslatorFrom3Dto2D.cpp" />
     <ClCompile Include="HierarchyClasses\Classes\Frame.cpp" />
     <ClCompile Include="HierarchyClasses\Classes\HierarchyRoot.cpp" />
-    <ClCompile Include="HierarchyClasses\Classes\Object.cpp" />
+    <ClCompile Include="HierarchyClasses\Classes\Object3D.cpp" />
     <ClCompile Include="HierarchyClasses\Modifiers\Instance.cpp" />
     <ClCompile Include="HierarchyClasses\Modifiers\Object2DData.cpp" />
     <ClCompile Include="HierarchyClasses\Modifiers\Object3DData.cpp" />
+    <ClCompile Include="HierarchyClasses\Modifiers\OffScreenRenderingData.cpp" />
     <ClCompile Include="HierarchyClasses\Modifiers\Renderer.cpp" />
     <ClCompile Include="HierarchyClasses\Modifiers\TranslatorFrom2D.cpp" />
     <ClCompile Include="HierarchyClasses\Modifiers\TranslatorFrom3D.cpp" />
@@ -56,7 +59,9 @@
     <ClInclude Include="DLLStuff.h" />
     <ClInclude Include="Graphics\BufferLayout.h" />
     <ClInclude Include="Graphics\Debug.h" />
+    <ClInclude Include="Graphics\FrameBuffer.h" />
     <ClInclude Include="Graphics\IndexBuffer.h" />
+    <ClInclude Include="Graphics\InputController.h" />
     <ClInclude Include="Graphics\Shader.h" />
     <ClInclude Include="Graphics\ShaderProgram.h" />
     <ClInclude Include="Graphics\ShaderProgramsManager.h" />
@@ -73,6 +78,7 @@
     <ClInclude Include="HierarchyClasses\Modifiers\Instance.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\Object2DData.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\Object3DData.h" />
+    <ClInclude Include="HierarchyClasses\Modifiers\OffScreenRenderingData.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\Renderer.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\TranslatorFrom2D.h" />
     <ClInclude Include="HierarchyClasses\Modifiers\TranslatorFrom3D.h" />
@@ -204,14 +210,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\Dependencies;$(SolutionDir)Engine\Dependencies\GLEW\include;$(SolutionDir)Engine\Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Dependencies\GLEW\lib\Release\x64;$(SolutionDir)Engine\Dependencies\GLFW\lib-vc2022</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Dependencies\GLFW\lib-vc2022;$(SolutionDir)Engine\Dependencies\GLEW\lib\Release\Win32</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -222,7 +228,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\Dependencies;$(SolutionDir)Engine\Dependencies\GLEW\include;$(SolutionDir)Engine\Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -230,8 +236,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Dependencies\GLEW\lib\Release\x64;$(SolutionDir)Engine\Dependencies\GLFW\lib-vc2022</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Dependencies\GLFW\lib-vc2022;$(SolutionDir)Engine\Dependencies\GLEW\lib\Release\Win32</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
